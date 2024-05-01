@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test:watch": "npx jest --watch",
+    "test:watch": "npx jest --watchAll",
     "prettier:check": "npx prettier . --check",
     "prettier:fix": "npx prettier . --write"
   },
