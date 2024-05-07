@@ -21,7 +21,7 @@ bun dev
 
 3. Logue no sistema utilizando uma conta gmail qualquer.
 
-### obs: Caso deseje acessar a versão de produção, acesse: [Church Plus](https://....)
+### obs: Caso deseje acessar a versão de produção, acesse: [Church Plus](https://church-plus.vercel.app)
 
 ## Tecnologias utilizadas no projeto
 
