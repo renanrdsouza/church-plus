@@ -3,16 +3,18 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "npm run services:up && next dev",
-    "services:up": "docker compose -f ./src/infrastructure/docker-compose.yml up -d",
-    "services:down": "docker compose -f ./src/infrastructure/docker-compose.yml down",
-    "services:stop": "docker compose -f ./src/infrastructure/docker-compose.yml stop",
+    "dev": "npm run services:up && npm run wait-for-postgres && npm run migration:dev && next dev",
+    "services:up": "docker compose -f ./docker-compose.yml up -d",
+    "services:down": "docker compose -f ./docker-compose.yml down",
+    "services:stop": "docker compose -f ./docker-compose.yml stop",
+    "migration:dev": "prisma migrate dev --preview-feature",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "test:watch": "npx jest --watchAll",
     "prettier:check": "npx prettier . --check",
-    "prettier:fix": "npx prettier . --write"
+    "prettier:fix": "npx prettier . --write",
+    "wait-for-postgres": "node ./src/infrastructure/scripts/wait-for-postgres.js"
   },
   "dependencies": {
     "@prisma/client": "^5.13.0",

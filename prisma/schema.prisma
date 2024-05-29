@@ -13,28 +13,64 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Post {
-  id        Int      @id @default(autoincrement())
+model FinancialContribuition {
+  id        String   @id @default(uuid())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  title     String   @db.VarChar(255)
-  content   String?
-  published Boolean  @default(false)
-  author    User     @relation(fields: [authorId], references: [id])
-  authorId  Int
+  value     Int
+  type      String
+  member    Member   @relation(fields: [memberId], references: [id])
+  memberId  String
 }
 
-model Profile {
-  id     Int     @id @default(autoincrement())
-  bio    String?
-  user   User    @relation(fields: [userId], references: [id])
-  userId Int     @unique
+model Member {
+  id                     String                   @id @default(uuid())
+  name                   String
+  cpf                    String
+  birthDate              DateTime
+  email                  String                   @unique
+  baptismDate            DateTime
+  fatherName             String
+  motherName             String
+  education              String
+  profession             String
+  financialContributions FinancialContribuition[]
+  phoneList              Phone[]
+  adressList             Address[]
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
 }
 
-model User {
-  id      Int      @id @default(autoincrement())
-  email   String   @unique
-  name    String?
-  posts   Post[]
-  profile Profile?
+model Address {
+  id           Int     @id @default(autoincrement())
+  cep          String
+  number       Int
+  street       String
+  neighborhood String
+  complement   String?
+  cityId       String
+  city         City    @relation(fields: [cityId], references: [id])
+  memberId     String
+  member       Member  @relation(fields: [memberId], references: [id])
+}
+
+model State {
+  id     String @id @default(uuid())
+  name   String
+  cities City[]
+}
+
+model City {
+  id        String    @id @default(uuid())
+  name      String
+  state     State     @relation(fields: [stateId], references: [id])
+  stateId   String
+  addresses Address[]
+}
+
+model Phone {
+  id          Int    @id @default(autoincrement())
+  phoneNumber String
+  memberId    String
+  member      Member @relation(fields: [memberId], references: [id])
 }

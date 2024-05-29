@@ -1,4 +1,4 @@
-export interface IDatabaseVersionRecord {
+export interface IServerVersion {
   server_version: string;
 }
 
