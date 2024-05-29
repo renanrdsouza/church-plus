@@ -1,0 +1,76 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FinancialContribuition {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  value     Int
+  type      String
+  member    Member   @relation(fields: [memberId], references: [id])
+  memberId  String
+}
+
+model Member {
+  id                     String                   @id @default(uuid())
+  name                   String
+  cpf                    String
+  birthDate              DateTime
+  email                  String                   @unique
+  baptismDate            DateTime
+  fatherName             String
+  motherName             String
+  education              String
+  profession             String
+  financialContributions FinancialContribuition[]
+  phoneList              Phone[]
+  adressList             Address[]
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+}
+
+model Address {
+  id           Int     @id @default(autoincrement())
+  cep          String
+  number       Int
+  street       String
+  neighborhood String
+  complement   String?
+  cityId       String
+  city         City    @relation(fields: [cityId], references: [id])
+  memberId     String
+  member       Member  @relation(fields: [memberId], references: [id])
+}
+
+model State {
+  id     String @id @default(uuid())
+  name   String
+  cities City[]
+}
+
+model City {
+  id        String    @id @default(uuid())
+  name      String
+  state     State     @relation(fields: [stateId], references: [id])
+  stateId   String
+  addresses Address[]
+}
+
+model Phone {
+  id          Int    @id @default(autoincrement())
+  phoneNumber String
+  memberId    String
+  member      Member @relation(fields: [memberId], references: [id])
+}
