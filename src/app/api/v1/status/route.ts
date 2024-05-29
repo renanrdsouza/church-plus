@@ -13,7 +13,7 @@ export async function GET(request: Request) {
   const databaseMaxConnections = (await query(
     "SHOW MAX_CONNECTIONS;",
   )) as IDatabaseMaxConnections[];
-  const databaseName = process.env.POSTGRES_DB;
+  const databaseName = getDatabaseName();
   const databaseOpennedConections = (await query(
     `SELECT COUNT(*)::int FROM pg_stat_activity where datname = '${databaseName}';`,
   )) as IDatabaseOpennedConnections[];
@@ -31,4 +31,10 @@ export async function GET(request: Request) {
     },
     { status: 200 },
   );
+}
+
+function getDatabaseName() {
+  return process.env.NODE_ENV === "development"
+    ? process.env.POSTGRES_DB
+    : process.env.DATABASE_URL?.match(/church-plus-\w{7,10}/gi);
 }
