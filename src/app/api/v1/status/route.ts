@@ -4,7 +4,7 @@ import {
   IDatabaseMaxConnections,
   IDatabaseOpennedConnections,
   IServerVersion,
-} from "@/utils/databaseVersionInterfaces";
+} from "@/utils/databaseInterfaces";
 
 export async function GET(request: Request) {
   const databaseVersion = (await query(
