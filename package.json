@@ -8,7 +8,7 @@
     "services:down": "docker compose -f ./docker-compose.yml down",
     "services:stop": "docker compose -f ./docker-compose.yml stop",
     "migration:dev": "prisma migrate dev --preview-feature",
-    "build": "next build",
+    "build": "prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "test:watch": "npx jest --watchAll",
@@ -18,7 +18,9 @@
   },
   "dependencies": {
     "@prisma/client": "^5.13.0",
+    "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
+    "lodash": "^4.17.21",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18"

@@ -14,63 +14,49 @@ datasource db {
 }
 
 model FinancialContribuition {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  value     Int
-  type      String
-  member    Member   @relation(fields: [memberId], references: [id])
-  memberId  String
+  id         String   @id @default(uuid())
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  value      Int
+  type       String
+  member     Member   @relation(fields: [memberId], references: [id])
+  memberId   String
 }
 
 model Member {
-  id                     String                   @id @default(uuid())
-  name                   String
-  cpf                    String
-  birthDate              DateTime
-  email                  String                   @unique
-  baptismDate            DateTime
-  fatherName             String
-  motherName             String
-  education              String
-  profession             String
-  financialContributions FinancialContribuition[]
-  phoneList              Phone[]
-  adressList             Address[]
-  createdAt              DateTime                 @default(now())
-  updatedAt              DateTime                 @updatedAt
+  id                      String                   @id @default(uuid())
+  name                    String
+  cpf                     String
+  birth_date              DateTime
+  email                   String                   @unique
+  baptism_date            DateTime
+  father_name             String
+  mother_name             String
+  education               String
+  profession              String
+  financial_contributions FinancialContribuition[]
+  phone_list              Phone[]
+  address_list            Address[]
+  created_at              DateTime                 @default(now())
+  updated_at              DateTime                 @updatedAt
 }
 
 model Address {
-  id           Int     @id @default(autoincrement())
-  cep          String
+  id           String  @id @default(uuid())
+  zip_code     String
   number       Int
   street       String
   neighborhood String
   complement   String?
-  cityId       String
-  city         City    @relation(fields: [cityId], references: [id])
-  memberId     String
-  member       Member  @relation(fields: [memberId], references: [id])
-}
-
-model State {
-  id     String @id @default(uuid())
-  name   String
-  cities City[]
-}
-
-model City {
-  id        String    @id @default(uuid())
-  name      String
-  state     State     @relation(fields: [stateId], references: [id])
-  stateId   String
-  addresses Address[]
+  city         String
+  uf           String
+  member_id    String
+  member       Member  @relation(fields: [member_id], references: [id])
 }
 
 model Phone {
-  id          Int    @id @default(autoincrement())
-  phoneNumber String
-  memberId    String
-  member      Member @relation(fields: [memberId], references: [id])
+  id           String @id @default(uuid())
+  phone_number String
+  member_id    String
+  member       Member @relation(fields: [member_id], references: [id])
 }
