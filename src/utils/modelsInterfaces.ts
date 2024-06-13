@@ -8,8 +8,8 @@ interface IMember {
   mother_name: string;
   education: string;
   profession: string;
-  address_list?: IAddress[];
-  phone_list?: IPhone[];
+  address_list: IAddress[];
+  phone_list: IPhone[];
   created_at?: Date;
   updated_at?: Date;
 }

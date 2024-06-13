@@ -1,30 +1,32 @@
-export function buildMember(): IMember {
+export function buildMember() {
   const member = {
+    id: 1,
     name: "John Doe",
-    cpf: "12345678901",
-    birth_date: new Date(),
-    email: "johndoe@email.com",
-    baptism_date: new Date(),
+    cpf: "529.982.247-25",
+    birth_date: "1990-01-01",
+    email: "john.doe@example.com",
+    baptism_date: "2021-01-01",
     father_name: "John Doe Sr.",
     mother_name: "Jane Doe",
-    education: "College",
-    profession: "Developer",
+    education: "Bachelor's Degree",
+    profession: "Software Engineer",
     phone_list: [
       {
-        phone_number: "123456789"
-      }
+        phone_number: "(24) 99999-9999",
+      },
     ],
     address_list: [
       {
-        zip_code: "12345678",
-        number: 123,
-        street: "Main St",
+        city: "Springfield",
+        complement: "Apt 123",
         neighborhood: "Downtown",
-        uf: "SP",
-        city: "São Paulo",
-      }
+        number: 123,
+        street: "123 Main St",
+        uf: "IL",
+        zip_code: "12345-678",
+      },
     ],
-  };
+  }
 
   return member;
 }

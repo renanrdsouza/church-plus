@@ -10,7 +10,7 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ savedMember }, { status: 201 });
   } catch (err: any) {
-    if (err.message === "Member already exists") {
+    if (err.message === "Member already exists" || err.message.includes("Invalid")) {
       return NextResponse.json({ error: err.message }, { status: 400 });
     } else {
       return NextResponse.json(
