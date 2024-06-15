@@ -1,4 +1,4 @@
-import { query, saveMember } from "../../models/database";
+import { query, create, getMember } from "../../models/database";
 import { buildMember } from "../../utils/utils";
 import { prismaMock } from "../singleton";
 
@@ -33,13 +33,10 @@ describe("query", () => {
   });
 });
 
-describe("saveMember", () => {
-  let prismaMock;
-
+describe("create", () => {
   beforeEach(() => {
     // Clear all mocks before each test
     jest.clearAllMocks();
-    prismaMock = require("../../models/db").default;
     prismaMock.member = {
       findFirst: jest.fn(),
       create: jest.fn(),
@@ -50,7 +47,7 @@ describe("saveMember", () => {
     const newMember = buildMember();
     prismaMock.member.create.mockResolvedValue(newMember);
 
-    const result = await saveMember(newMember);
+    const result = await create(newMember);
 
     expect(prismaMock.member.findFirst).toHaveBeenCalledWith({
       where: {
@@ -101,6 +98,54 @@ describe("saveMember", () => {
     const newMember = buildMember();
     prismaMock.member.create.mockRejectedValue(new Error("Member already exists"));
 
-    await expect(saveMember(newMember)).rejects.toThrow("Member already exists");
+    await expect(create(newMember)).rejects.toThrow("Member already exists");
+  });
+});
+
+describe('getMember', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    prismaMock.member = {
+      findUniqueOrThrow: jest.fn()
+    };
+  });
+  it('returns a member when one exists with the provided id', async () => {
+    const id = 'some-id';
+    const mockMember = {
+      id,
+      address_list: [],
+      phone_list: [],
+      financial_contributions: []
+    };
+
+    prismaMock.member.findUniqueOrThrow.mockResolvedValue(mockMember);
+
+    const member = await getMember(id);
+
+    expect(member).toEqual(mockMember);
+    expect(prismaMock.member.findUniqueOrThrow).toHaveBeenCalledWith({
+      where: { id },
+      include: {
+        address_list: true,
+        phone_list: true,
+        financial_contributions: true
+      }
+    });
+  });
+
+  it('throws an error when no member exists with the provided id', async () => {
+    const id = 'some-id';
+
+    prismaMock.member.findUniqueOrThrow.mockRejectedValue(new Error("No Member found"));
+
+    await expect(getMember(id)).rejects.toThrow('No Member found');
+    expect(prismaMock.member.findUniqueOrThrow).toHaveBeenCalledWith({
+      where: { id },
+      include: {
+        address_list: true,
+        phone_list: true,
+        financial_contributions: true
+      }
+    });
   });
 });

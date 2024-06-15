@@ -14,7 +14,7 @@ export async function query(query: string) {
   }
 }
 
-export async function saveMember(newMember: IMember) {
+export async function create(newMember: IMember) {
   const parsedBirthDate = new Date(newMember.birth_date).toISOString();
   const parsedBaptismDate = new Date(newMember.baptism_date).toISOString();
 
@@ -64,6 +64,25 @@ export async function saveMember(newMember: IMember) {
   });
 
   return savedMember;
+}
+
+export async function getMember(id: string) {
+  /* 
+    If findUniqueOrThrow does not found a member, 
+    it throws an error with the following message: "No Member Found" 
+  */
+  const member = await prisma.member.findUniqueOrThrow({ 
+    where: { 
+      id 
+    },
+    include: {
+      address_list: true,
+      phone_list: true,
+      financial_contributions: true
+    }
+  })
+
+  return member;
 }
 
 function validateNewMember(newMember: IMember) {
