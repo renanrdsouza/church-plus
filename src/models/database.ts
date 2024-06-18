@@ -1,6 +1,5 @@
 import { Prisma } from "@prisma/client";
 import prisma from "./db";
-import { error } from "console";
 
 export async function query(query: string) {
   const preparedQuery = Prisma.sql([query]);

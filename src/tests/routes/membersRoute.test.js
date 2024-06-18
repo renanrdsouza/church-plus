@@ -1,6 +1,6 @@
 import { POST } from "@/app/api/v1/members/route";
 import { GET } from "@/app/api/v1/members/[id]/route"
-import { create, getMember, getAllMembers } from "@/models/database";
+import { create, getMember } from "@/models/database";
 import { NextResponse } from "next/server";
 
 jest.mock("../../models/database");
