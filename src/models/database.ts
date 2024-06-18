@@ -71,22 +71,38 @@ export async function getMember(id: string) {
     If findUniqueOrThrow does not found a member, 
     it throws an error with the following message: "No Member Found" 
   */
-  const member = await prisma.member.findUniqueOrThrow({ 
-    where: { 
-      id 
+  const member = await prisma.member.findUniqueOrThrow(
+    {
+      where: {
+        id,
+      },
+      include: {
+        address_list: true,
+        phone_list: true,
+        financial_contributions: true,
+      },
     },
-    include: {
-      address_list: true,
-      phone_list: true,
-      financial_contributions: true
-    }
-  })
+  );
 
   return member;
 }
 
+export async function getAllMembers() {
+  const members = await prisma.member.findMany({
+    include: {
+      address_list: true,
+      phone_list: true,
+      financial_contributions: true,
+    },
+  });
+
+  return members;
+}
+
 function validateNewMember(newMember: IMember) {
-  [newMember.name, newMember.father_name, newMember.mother_name].forEach(validateName);
+  [newMember.name, newMember.father_name, newMember.mother_name].forEach(
+    validateName,
+  );
   validateCPF(newMember.cpf);
   [newMember.birth_date, newMember.baptism_date].forEach(validateDate);
   validateEmail(newMember.email);
@@ -144,7 +160,8 @@ function validateDate(date: Date): boolean {
 }
 
 function validateName(name: string): boolean {
-  const nameRegex = /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+  const nameRegex =
+    /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
 
   if (!nameRegex.test(name) || name.trim() === "") {
     throw new Error("Invalid name");

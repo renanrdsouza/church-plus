@@ -1,4 +1,5 @@
-import { POST, GET } from "@/app/api/v1/members/route";
+import { POST } from "@/app/api/v1/members/route";
+import { GET } from "@/app/api/v1/members/[id]/route"
 import { create, getMember } from "@/models/database";
 import { NextResponse } from "next/server";
 
@@ -74,14 +75,14 @@ describe("POST", () => {
 
 describe("GET a member", () => {
   it("should return a 200 response with the member", async () => {
-    const request = new Request("http://localhost:3000/api/v1/members?id=1", {
+    const request = new Request("http://localhost:3000/api/v1/members/1", {
       method: "GET",
     });
 
     const member = { id: 1, name: "John Doe" };
     getMember.mockResolvedValue(member);
 
-    const response = await GET(request);
+    const response = await GET(request, { params: { id: "1" } });
 
     expect(getMember).toHaveBeenCalledWith("1");
     expect(NextResponse.json).toHaveBeenCalledWith({ member }, { status: 200 });
@@ -94,14 +95,14 @@ describe("GET a member", () => {
     });
 
     getMember.mockImplementation(() => {
-      throw new Error('No Member Found');
+      throw new Error('No Member found');
     });
 
-    const response = await GET(request);
+    const response = await GET(request, { params: { id: "1" } });
 
     expect(getMember).toHaveBeenCalledWith("1");
-    expect(NextResponse.json).toHaveBeenCalledWith({ error: "No Member Found" }, { status: 404 });
-    expect(response).toEqual(NextResponse.json({ error: "No Member Found" }, { status: 404 }));
+    expect(NextResponse.json).toHaveBeenCalledWith({ error: "No Member found" }, { status: 404 });
+    expect(response).toEqual(NextResponse.json({ error: "No Member found" }, { status: 404 }));
   });
 
   it("should return a 500 response for other errors", async () => {
@@ -112,7 +113,7 @@ describe("GET a member", () => {
     const error = new Error("Internal Server Error");
     getMember.mockRejectedValue(error);
 
-    const response = await GET(request);
+    const response = await GET(request, { params: { id: "1" } });
 
     expect(getMember).toHaveBeenCalledWith("1");
     expect(NextResponse.json).toHaveBeenCalledWith({ error: "Internal Server Error" }, { status: 500 });
