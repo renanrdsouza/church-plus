@@ -71,7 +71,6 @@ export async function getMember(id: string) {
     If findUniqueOrThrow does not found a member, 
     it throws an error with the following message: "No Member Found" 
   */
-  console.log(id);
   const member = await prisma.member.findUniqueOrThrow(
     {
       where: {
