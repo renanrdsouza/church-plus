@@ -3,9 +3,9 @@ import { getMember, updateMember } from "@/models/database";
 
 export async function GET(
   request: Request,
-  { params }: { params?: { id?: string } },
+  { params }: { params: { id: string } },
 ) {
-  const id = params?.id;
+  const id = params.id;
 
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
