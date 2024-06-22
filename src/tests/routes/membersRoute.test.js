@@ -1,6 +1,6 @@
 import { POST } from "@/app/api/v1/members/route";
-import { GET } from "@/app/api/v1/members/[id]/route"
-import { create, getMember } from "@/models/database";
+import { GET, PUT } from "@/app/api/v1/members/[id]/route"
+import { create, getMember, updateMember } from "@/models/database";
 import { NextResponse } from "next/server";
 
 jest.mock("../../models/database");
@@ -116,6 +116,57 @@ describe("GET a member", () => {
     const response = await GET(request, { params: { id: "1" } });
 
     expect(getMember).toHaveBeenCalledWith("1");
+    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Internal Server Error" }, { status: 500 });
+    expect(response).toEqual(NextResponse.json({ error: "Internal Server Error" }, { status: 500 }));
+  });
+});
+
+describe("PUT", () => {
+  it("should update a member and return 200 status code", async () => {
+    const params = { id: "123" };
+    const body = { name: "John Doe" };
+    const request = new Request("http://localhost:3000/api/v1/members", {
+      method: "PUT",
+      body: JSON.stringify(body)
+    });
+    const updatedMember = { name: "John Doe" };
+
+    updateMember.mockResolvedValue(updatedMember);
+
+    const response = await PUT(request, { params });
+
+    expect(updateMember).toHaveBeenCalledWith(params.id, body);
+    expect(NextResponse.json).toHaveBeenCalledWith({ member: updatedMember }, { status: 200 });
+    expect(response).toEqual(NextResponse.json({ member: updatedMember }, { status: 200 }));
+  });
+
+  it("should return 400 status code if id is missing", async () => {
+    const body = { name: "John Doe" };
+    const request = new Request("http://localhost:3000/api/v1/members", {
+      method: "PUT",
+      body: JSON.stringify(body)
+    });
+    const params = { id: undefined };
+
+    const response = await PUT(request, { params });
+
+    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Missing id" }, { status: 400 });
+    expect(response).toEqual(NextResponse.json({ error: "Missing id" }, { status: 400 }));
+  });
+
+  it("should return 500 status code for errors", async () => {
+    const body = { name: "John Doe" };
+    const request = new Request("http://localhost:3000/api/v1/members", {
+      method: "PUT",
+      body: JSON.stringify(body)
+    });
+    const params = { id: "123" };
+
+    updateMember.mockRejectedValue(new Error("Internal Server Error"));
+
+    const response = await PUT(request, { params });
+
+    expect(updateMember).toHaveBeenCalledWith(params.id, body);
     expect(NextResponse.json).toHaveBeenCalledWith({ error: "Internal Server Error" }, { status: 500 });
     expect(response).toEqual(NextResponse.json({ error: "Internal Server Error" }, { status: 500 }));
   });

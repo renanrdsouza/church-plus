@@ -1,4 +1,4 @@
-import { create, getAllMembers } from "@/models/database";
+import { create, getAllMembers, updateMember } from "@/models/database";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
