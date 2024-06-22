@@ -1,11 +1,11 @@
 import { NextResponse } from "next/server";
-import { getMember } from "@/models/database";
+import { getMember, updateMember } from "@/models/database";
 
 export async function GET(
   request: Request,
-  { params }: { params: { id: string } },
+  { params }: { params?: { id?: string } },
 ) {
-  const id = params.id;
+  const id = params?.id;
 
   if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
 
@@ -17,10 +17,25 @@ export async function GET(
     if (err.message === "No Member found") {
       return NextResponse.json({ error: err.message }, { status: 404 });
     } else {
-      return NextResponse.json(
-        { error: err.message },
-        { status: 500 },
-      );
+      return NextResponse.json({ error: err.message }, { status: 500 });
     }
+  }
+}
+
+export async function PUT(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
+  const id = params.id;
+  const body: IMemberPutRequest = await request.json();
+
+  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+  try {
+    const updatedMember = await updateMember(id, body);
+
+    return NextResponse.json({ member: updatedMember }, { status: 200 });
+  } catch (err: any) {
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
   }
 }

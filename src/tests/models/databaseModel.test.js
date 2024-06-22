@@ -1,5 +1,5 @@
 import { query, create, getMember } from "../../models/database";
-import { buildMember } from "../../utils/utils";
+import { buildMember } from "../testUtils";
 import { prismaMock } from "../singleton";
 
 describe("query", () => {
