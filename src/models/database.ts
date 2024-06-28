@@ -1,9 +1,10 @@
 import { Prisma } from "@prisma/client";
-import prisma from "./db";
+import prisma from "../infrastructure/db";
 import {
   validateNewMember,
   validateUpdateMember
 } from "./validations";
+import { Status } from "@/utils/enums";
 
 export async function query(query: string) {
   const preparedQuery = Prisma.sql([query]);
@@ -93,6 +94,9 @@ export async function getMember(id: string) {
 
 export async function getAllMembers() {
   const members = await prisma.member.findMany({
+    where: {
+      status: Status.Active
+    },
     include: {
       address_list: true,
       phone_list: true,
@@ -162,4 +166,21 @@ export async function updateMember(
   });
 
   return updatedMember;
+}
+
+export async function deleteMember(id: string) {
+  const memberToDelete = await prisma.member.findUniqueOrThrow({
+    where: {
+      id: id
+    }
+  })
+
+  await prisma.member.update({
+    where: {
+      id: id
+    },
+    data: {
+      status: Status.Inactive
+    }
+  })
 }

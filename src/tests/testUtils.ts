@@ -1,15 +1,20 @@
-export function buildMember() {
+import { Status } from "@/utils/enums";
+
+export function buildMember(status: Status = Status.Active) {
   const member = {
-    id: 1,
+    id: "1",
     name: "John Doe",
     cpf: "529.982.247-25",
-    birth_date: "1990-01-01",
+    birth_date: new Date("1990-01-01"),
     email: "john.doe@example.com",
-    baptism_date: "2021-01-01",
+    baptism_date: new Date("2021-01-01"),
     father_name: "John Doe Sr.",
     mother_name: "Jane Doe",
     education: "Bachelor's Degree",
     profession: "Software Engineer",
+    created_at: new Date("2021-01-01"), 
+    updated_at: new Date("2021-01-01"),
+    status,
     phone_list: [
       {
         phone_number: "(24) 99999-9999",

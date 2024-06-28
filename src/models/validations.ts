@@ -37,9 +37,9 @@ function validateCPF(cpf: string): boolean {
 }
 
 function validateDate(date: Date): boolean {
-  const dateRegex = /^\d{4}-\d{2}-\d{2}$/;
+  const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
 
-  if (!dateRegex.test(date.toString())) {
+  if (!dateRegex.test(date.toISOString())) {
     throw new Error("Invalid date");
   }
 

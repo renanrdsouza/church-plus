@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getMember, updateMember } from "@/models/database";
+import { getMember, updateMember, deleteMember } from "@/models/database";
 
 export async function GET(
   request: Request,
@@ -36,6 +36,26 @@ export async function PUT(
 
     return NextResponse.json({ member: updatedMember }, { status: 200 });
   } catch (err: any) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
   }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
+  const id = params.id;
+
+  if (!id) return NextResponse.json({ error: "Missing id" }, { status: 400 });
+
+  try {
+    await deleteMember(id);
+
+    return NextResponse.json({ status: 200 });
+  } catch (err) {
+    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
+  }  
 }

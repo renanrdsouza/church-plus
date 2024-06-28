@@ -39,6 +39,7 @@ model Member {
   address_list            Address[]
   created_at              DateTime                 @default(now())
   updated_at              DateTime                 @updatedAt
+  status                  String                   @default("ACTIVE")
 }
 
 model Address {
