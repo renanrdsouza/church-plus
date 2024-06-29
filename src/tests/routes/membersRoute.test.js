@@ -1,6 +1,6 @@
 import { POST } from "@/app/api/v1/members/route";
-import { GET, PUT } from "@/app/api/v1/members/[id]/route"
-import { create, getMember, updateMember } from "@/models/database";
+import { GET, PUT, DELETE } from "@/app/api/v1/members/[id]/route"
+import { create, getMember, updateMember, deleteMember } from "@/models/database";
 import { NextResponse } from "next/server";
 
 jest.mock("../../models/database");
@@ -169,5 +169,38 @@ describe("PUT", () => {
     expect(updateMember).toHaveBeenCalledWith(params.id, body);
     expect(NextResponse.json).toHaveBeenCalledWith({ error: "Internal Server Error" }, { status: 500 });
     expect(response).toEqual(NextResponse.json({ error: "Internal Server Error" }, { status: 500 }));
+  });
+});
+
+describe("DELETE", () => {
+  it("should delete member and return success status", async () => {
+    const id = "1";
+
+    const request = new Request("http://localhost:3000/api/v1/members", {
+      method: "DELETE",
+    });
+    const response = await DELETE(request, { params: { id } });
+
+    expect(deleteMember).toHaveBeenCalledWith(id);
+    expect(NextResponse.json).toHaveBeenCalledWith({ status: 200 });
+    expect(response).toEqual(NextResponse.json());
+  });
+
+  it("should return internal server error when an error occurs", async () => {
+    const id = "1";
+    const errorMessage = "Some error message";
+    deleteMember.mockRejectedValue(new Error(errorMessage));
+
+    const request = new Request("http://localhost:3000/api/v1/members", {
+      method: "DELETE",
+    });
+    const response = await DELETE(request, { params: { id } });
+
+    expect(deleteMember).toHaveBeenCalledWith(id);
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
+    expect(response).toEqual(NextResponse.json());
   });
 });
