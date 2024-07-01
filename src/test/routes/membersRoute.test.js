@@ -1,9 +1,9 @@
 import { POST } from "@/app/api/v1/members/route";
 import { GET, PUT, DELETE } from "@/app/api/v1/members/[id]/route"
-import { create, getMember, updateMember, deleteMember } from "@/models/database";
+import { create, getMember, updateMember, deleteMember } from "@/app/core/models/database";
 import { NextResponse } from "next/server";
 
-jest.mock("../../models/database");
+jest.mock("../../app/core/models/database.ts");
 
 NextResponse.json = jest.fn();
 

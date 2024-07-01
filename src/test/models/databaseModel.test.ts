@@ -1,5 +1,5 @@
-import { query, create, getMember, deleteMember, getAllMembers } from "../../models/database";
-import { Status } from "../../utils/enums";
+import { query, create, getMember, deleteMember, getAllMembers } from "@/app/core/models/database";
+import { Status } from "@/app/core/utils/enums";
 import { buildMember } from "../testUtils";
 import { prismaMock } from "../singleton";
 

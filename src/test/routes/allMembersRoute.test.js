@@ -1,8 +1,8 @@
 import { GET } from "@/app/api/v1/members/route";
-import { getAllMembers } from "@/models/database";
+import { getAllMembers } from "@/app/core/models/database";
 import { NextResponse } from "next/server";
 
-jest.mock("../../models/database");
+jest.mock("../../app/core/models/database.ts");
 
 NextResponse.json = jest.fn();
 

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getMember, updateMember, deleteMember } from "@/models/database";
+import { getMember, updateMember, deleteMember } from "@/app/core/models/database";
 
 export async function GET(
   request: Request,

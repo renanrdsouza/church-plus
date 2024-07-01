@@ -1,10 +1,10 @@
 import { Prisma } from "@prisma/client";
-import prisma from "../infrastructure/db";
+import prisma from "@/app/adapters/PrismaDatabaseAdapter";
 import {
   validateNewMember,
   validateUpdateMember
 } from "./validations";
-import { Status } from "@/utils/enums";
+import { Status } from "@/app/core/utils/enums";
 
 export async function query(query: string) {
   const preparedQuery = Prisma.sql([query]);

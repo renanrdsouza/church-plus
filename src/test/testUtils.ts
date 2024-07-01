@@ -1,4 +1,4 @@
-import { Status } from "@/utils/enums";
+import { Status } from "@/app/core/utils/enums";
 
 export function buildMember(status: Status = Status.Active) {
   const member = {
