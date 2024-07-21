@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { getMember, updateMember, deleteMember } from "@/models/database";
+import { getMember, updateMember, deleteMember } from "@/models/memberService";
 
 export async function GET(
   request: Request,
@@ -56,6 +56,9 @@ export async function DELETE(
 
     return NextResponse.json({ status: 200 });
   } catch (err) {
-    return NextResponse.json({ error: "Internal Server Error" }, { status: 500 });
-  }  
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+  }
 }

@@ -39,7 +39,7 @@ function validateCPF(cpf: string): boolean {
 function validateDate(date: Date): boolean {
   const dateRegex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/;
   const parsedDate = new Date(date).toISOString();
-  
+
   if (!dateRegex.test(parsedDate)) {
     throw new Error("Invalid date");
   }
@@ -49,7 +49,7 @@ function validateDate(date: Date): boolean {
 
 function validateName(name: string): boolean {
   const nameRegex =
-    /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/u;
+    /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/;
 
   if (!nameRegex.test(name) || name.trim() === "") {
     throw new Error("Invalid name");
@@ -105,6 +105,23 @@ function validatePhoneList(phoneList: IPhone[]): boolean {
   return true;
 }
 
+function validateFinancialContribution(
+  financialContribution: IFinancialContribuition,
+): boolean {
+  if (
+    typeof financialContribution.value !== "number" ||
+    financialContribution.value <= 0
+  ) {
+    throw new Error("Invalid value");
+  }
+
+  if (!financialContribution.member_id?.trim()) {
+    throw new Error("Invalid member_id");
+  }
+
+  return true;
+}
+
 function validateNewMember(newMember: IMember) {
   [newMember.name, newMember.father_name, newMember.mother_name].forEach(
     validateName,
@@ -139,5 +156,6 @@ function validateUpdateMember(updateRequestMember: IMemberPutRequest) {
 
 export {
   validateNewMember,
-  validateUpdateMember
-}
+  validateUpdateMember,
+  validateFinancialContribution,
+};

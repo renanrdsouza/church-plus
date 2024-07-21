@@ -1,4 +1,5 @@
 interface IMember {
+  [key: string]: any;
   name: string;
   cpf: string;
   birth_date: Date;
@@ -15,14 +16,15 @@ interface IMember {
 }
 
 interface IFinancialContribuition {
-  created_at: Date;
-  updated_at: Date;
+  created_at?: Date;
+  updated_at?: Date;
   value: number;
   type: string;
+  member_id: string;
 }
 
 interface IPhone {
-  id?: string; 
+  id?: string;
   phone_number: string;
 }
 

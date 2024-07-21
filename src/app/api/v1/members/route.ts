@@ -1,4 +1,4 @@
-import { create, getAllMembers, updateMember } from "@/models/database";
+import { create, getAllMembers } from "@/models/memberService";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
@@ -9,7 +9,10 @@ export async function POST(request: Request) {
 
     return NextResponse.json({ savedMember }, { status: 201 });
   } catch (err: any) {
-    if (err.message === "Member already exists" || err.message.includes("Invalid")) {
+    if (
+      err.message === "Member already exists" ||
+      err.message.includes("Invalid")
+    ) {
       return NextResponse.json({ error: err.message }, { status: 400 });
     } else {
       return NextResponse.json(
@@ -23,7 +26,7 @@ export async function POST(request: Request) {
 export async function GET(request: Request) {
   try {
     const members = await getAllMembers();
-    
+
     return NextResponse.json({ members }, { status: 200 });
   } catch (err: any) {
     return NextResponse.json(
