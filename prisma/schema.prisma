@@ -19,8 +19,8 @@ model FinancialContribuition {
   updated_at DateTime @updatedAt
   value      Int
   type       String
-  member     Member   @relation(fields: [memberId], references: [id])
-  memberId   String
+  member     Member   @relation(fields: [member_id], references: [id])
+  member_id  String
 }
 
 model Member {
@@ -39,7 +39,7 @@ model Member {
   address_list            Address[]
   created_at              DateTime                 @default(now())
   updated_at              DateTime                 @updatedAt
-  status                  String                   @default("ACTIVE")
+  status                  String                   @default("Active")
 }
 
 model Address {

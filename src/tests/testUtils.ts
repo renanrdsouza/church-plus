@@ -1,6 +1,6 @@
 import { Status } from "@/utils/enums";
 
-export function buildMember(status: Status = Status.Active) {
+export function buildMember(status: Status = Status.ACTIVE) {
   const member = {
     id: "1",
     name: "John Doe",
@@ -12,11 +12,12 @@ export function buildMember(status: Status = Status.Active) {
     mother_name: "Jane Doe",
     education: "Bachelor's Degree",
     profession: "Software Engineer",
-    created_at: new Date("2021-01-01"), 
+    created_at: new Date("2021-01-01"),
     updated_at: new Date("2021-01-01"),
     status,
     phone_list: [
       {
+        id: "1",
         phone_number: "(24) 99999-9999",
       },
     ],
@@ -31,7 +32,7 @@ export function buildMember(status: Status = Status.Active) {
         zip_code: "12345-678",
       },
     ],
-  }
+  };
 
   return member;
 }

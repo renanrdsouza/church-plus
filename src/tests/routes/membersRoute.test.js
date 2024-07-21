@@ -1,9 +1,14 @@
 import { POST } from "@/app/api/v1/members/route";
-import { GET, PUT, DELETE } from "@/app/api/v1/members/[id]/route"
-import { create, getMember, updateMember, deleteMember } from "@/models/database";
+import { GET, PUT, DELETE } from "@/app/api/v1/members/[id]/route";
+import {
+  create,
+  getMember,
+  updateMember,
+  deleteMember,
+} from "@/models/memberService";
 import { NextResponse } from "next/server";
 
-jest.mock("../../models/database");
+jest.mock("../../models/memberService");
 
 NextResponse.json = jest.fn();
 
@@ -20,8 +25,13 @@ describe("POST", () => {
     const response = await POST(request);
 
     expect(create).toHaveBeenCalledWith({ name: "John Doe" });
-    expect(NextResponse.json).toHaveBeenCalledWith({ savedMember }, { status: 201 });
-    expect(response).toEqual(NextResponse.json({ savedMember }, { status: 201 }));
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { savedMember },
+      { status: 201 },
+    );
+    expect(response).toEqual(
+      NextResponse.json({ savedMember }, { status: 201 }),
+    );
   });
 
   it("should return a 400 response if the member already exists", async () => {
@@ -36,8 +46,13 @@ describe("POST", () => {
     const response = await POST(request);
 
     expect(create).toHaveBeenCalledWith({ name: "John Doe" });
-    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Member already exists" }, { status: 400 });
-    expect(response).toEqual(NextResponse.json({ error: "Member already exists" }, { status: 400 }));
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Member already exists" },
+      { status: 400 },
+    );
+    expect(response).toEqual(
+      NextResponse.json({ error: "Member already exists" }, { status: 400 }),
+    );
   });
 
   it("should return a 400 response if the request body is invalid", async () => {
@@ -52,8 +67,13 @@ describe("POST", () => {
     const response = await POST(request);
 
     expect(create).toHaveBeenCalledWith({});
-    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Invalid request body" }, { status: 400 });
-    expect(response).toEqual(NextResponse.json({ error: "Invalid request body" }, { status: 400 }));
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Invalid request body" },
+      { status: 400 },
+    );
+    expect(response).toEqual(
+      NextResponse.json({ error: "Invalid request body" }, { status: 400 }),
+    );
   });
 
   it("should return a 500 response for other errors", async () => {
@@ -68,8 +88,13 @@ describe("POST", () => {
     const response = await POST(request);
 
     expect(create).toHaveBeenCalledWith({ name: "John Doe" });
-    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Internal Server Error" }, { status: 500 });
-    expect(response).toEqual(NextResponse.json({ error: "Internal Server Error" }, { status: 500 }));
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+    expect(response).toEqual(
+      NextResponse.json({ error: "Internal Server Error" }, { status: 500 }),
+    );
   });
 });
 
@@ -95,14 +120,19 @@ describe("GET a member", () => {
     });
 
     getMember.mockImplementation(() => {
-      throw new Error('No Member found');
+      throw new Error("No Member found");
     });
 
     const response = await GET(request, { params: { id: "1" } });
 
     expect(getMember).toHaveBeenCalledWith("1");
-    expect(NextResponse.json).toHaveBeenCalledWith({ error: "No Member found" }, { status: 404 });
-    expect(response).toEqual(NextResponse.json({ error: "No Member found" }, { status: 404 }));
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "No Member found" },
+      { status: 404 },
+    );
+    expect(response).toEqual(
+      NextResponse.json({ error: "No Member found" }, { status: 404 }),
+    );
   });
 
   it("should return a 500 response for other errors", async () => {
@@ -116,8 +146,13 @@ describe("GET a member", () => {
     const response = await GET(request, { params: { id: "1" } });
 
     expect(getMember).toHaveBeenCalledWith("1");
-    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Internal Server Error" }, { status: 500 });
-    expect(response).toEqual(NextResponse.json({ error: "Internal Server Error" }, { status: 500 }));
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+    expect(response).toEqual(
+      NextResponse.json({ error: "Internal Server Error" }, { status: 500 }),
+    );
   });
 });
 
@@ -127,7 +162,7 @@ describe("PUT", () => {
     const body = { name: "John Doe" };
     const request = new Request("http://localhost:3000/api/v1/members", {
       method: "PUT",
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     const updatedMember = { name: "John Doe" };
 
@@ -136,29 +171,39 @@ describe("PUT", () => {
     const response = await PUT(request, { params });
 
     expect(updateMember).toHaveBeenCalledWith(params.id, body);
-    expect(NextResponse.json).toHaveBeenCalledWith({ member: updatedMember }, { status: 200 });
-    expect(response).toEqual(NextResponse.json({ member: updatedMember }, { status: 200 }));
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { member: updatedMember },
+      { status: 200 },
+    );
+    expect(response).toEqual(
+      NextResponse.json({ member: updatedMember }, { status: 200 }),
+    );
   });
 
   it("should return 400 status code if id is missing", async () => {
     const body = { name: "John Doe" };
     const request = new Request("http://localhost:3000/api/v1/members", {
       method: "PUT",
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     const params = { id: undefined };
 
     const response = await PUT(request, { params });
 
-    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Missing id" }, { status: 400 });
-    expect(response).toEqual(NextResponse.json({ error: "Missing id" }, { status: 400 }));
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Missing id" },
+      { status: 400 },
+    );
+    expect(response).toEqual(
+      NextResponse.json({ error: "Missing id" }, { status: 400 }),
+    );
   });
 
   it("should return 500 status code for errors", async () => {
     const body = { name: "John Doe" };
     const request = new Request("http://localhost:3000/api/v1/members", {
       method: "PUT",
-      body: JSON.stringify(body)
+      body: JSON.stringify(body),
     });
     const params = { id: "123" };
 
@@ -167,8 +212,13 @@ describe("PUT", () => {
     const response = await PUT(request, { params });
 
     expect(updateMember).toHaveBeenCalledWith(params.id, body);
-    expect(NextResponse.json).toHaveBeenCalledWith({ error: "Internal Server Error" }, { status: 500 });
-    expect(response).toEqual(NextResponse.json({ error: "Internal Server Error" }, { status: 500 }));
+    expect(NextResponse.json).toHaveBeenCalledWith(
+      { error: "Internal Server Error" },
+      { status: 500 },
+    );
+    expect(response).toEqual(
+      NextResponse.json({ error: "Internal Server Error" }, { status: 500 }),
+    );
   });
 });
 
@@ -199,7 +249,7 @@ describe("DELETE", () => {
     expect(deleteMember).toHaveBeenCalledWith(id);
     expect(NextResponse.json).toHaveBeenCalledWith(
       { error: "Internal Server Error" },
-      { status: 500 }
+      { status: 500 },
     );
     expect(response).toEqual(NextResponse.json());
   });

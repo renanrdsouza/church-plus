@@ -1,10 +1,7 @@
 import { Prisma } from "@prisma/client";
-import prisma from "../infrastructure/db";
-import {
-  validateNewMember,
-  validateUpdateMember
-} from "./validations";
+import prisma from "../infrastructure/database";
 import { Status } from "@/utils/enums";
+import { validateNewMember, validateUpdateMember } from "./validations";
 
 export async function query(query: string) {
   const preparedQuery = Prisma.sql([query]);
@@ -32,8 +29,6 @@ export async function create(newMember: IMember) {
   if (existingMember) {
     throw new Error("Member already exists");
   }
-
-  validateNewMember(newMember);
 
   const savedMember = await prisma.member.create({
     data: {
@@ -76,26 +71,9 @@ export async function getMember(id: string) {
     If findUniqueOrThrow does not found a member, 
     it throws an error with the following message: "No Member Found" 
   */
-  const member = await prisma.member.findUniqueOrThrow(
-    {
-      where: {
-        id,
-      },
-      include: {
-        address_list: true,
-        phone_list: true,
-        financial_contributions: true,
-      },
-    },
-  );
-
-  return member;
-}
-
-export async function getAllMembers() {
-  const members = await prisma.member.findMany({
+  const member = await prisma.member.findUniqueOrThrow({
     where: {
-      status: Status.Active
+      id,
     },
     include: {
       address_list: true,
@@ -104,7 +82,22 @@ export async function getAllMembers() {
     },
   });
 
-  return members;
+  return member;
+}
+
+export async function getAllMembers() {
+  const allMembers = await prisma.member.findMany({
+    where: {
+      status: Status.ACTIVE,
+    },
+    include: {
+      address_list: true,
+      phone_list: true,
+      financial_contributions: true,
+    },
+  });
+
+  return allMembers;
 }
 
 export async function updateMember(
@@ -113,9 +106,9 @@ export async function updateMember(
 ) {
   const existingMember = await prisma.member.findUniqueOrThrow({
     where: {
-      id
-    }
-  })
+      id,
+    },
+  });
 
   validateUpdateMember(updateRequest);
 
@@ -171,16 +164,16 @@ export async function updateMember(
 export async function deleteMember(id: string) {
   const memberToDelete = await prisma.member.findUniqueOrThrow({
     where: {
-      id: id
-    }
-  })
+      id: id,
+    },
+  });
 
   await prisma.member.update({
     where: {
-      id: id
+      id: memberToDelete.id,
     },
     data: {
-      status: Status.Inactive
-    }
-  })
+      status: Status.INACTIVE,
+    },
+  });
 }

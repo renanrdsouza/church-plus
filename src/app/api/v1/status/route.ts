@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { query } from "../../../../models/database";
+import { query } from "../../../../models/memberService";
 import {
   IDatabaseMaxConnections,
   IDatabaseOpennedConnections,
   IServerVersion,
-} from "@/utils/databaseInterfaces";
+} from "@/models/databaseInterfaces";
 
 export async function GET(request: Request) {
   const databaseVersion = (await query(
