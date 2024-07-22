@@ -1,7 +1,11 @@
-import { saveFinancialContribution } from "../../models/financialContribution";
+import {
+  getMemberContributions,
+  saveFinancialContribution,
+} from "../../models/financialContribution";
 import prisma from "../../infrastructure/database";
 import { validateFinancialContribution } from "../../models/validations";
 import { FinancialContributionType } from "@/utils/enums";
+import { prismaMock } from "../singleton";
 
 jest.mock("../../infrastructure/database", () => ({
   financialContribuition: {
@@ -63,5 +67,54 @@ describe("saveFinancialContribution", () => {
     await expect(
       saveFinancialContribution(mockFinancialContribution),
     ).rejects.toThrow("Database error");
+  });
+});
+
+describe("getMemberContributions", () => {
+  test("should fetch contributions for a given member ID", async () => {
+    const memberID = "123";
+    const mockContributions = [
+      {
+        id: "contribution1",
+        member_id: memberID,
+        amount: 100,
+        date: new Date("2023-01-01"),
+      },
+      {
+        id: "contribution2",
+        member_id: memberID,
+        amount: 200,
+        date: new Date("2023-02-01"),
+      },
+    ];
+
+    (prisma.financialContribuition.findMany as jest.Mock).mockResolvedValue(
+      mockContributions,
+    );
+
+    const contributions = await getMemberContributions(memberID);
+
+    expect(contributions).toEqual(mockContributions);
+    expect(prisma.financialContribuition.findMany).toHaveBeenCalledWith({
+      where: {
+        member_id: memberID,
+      },
+    });
+  });
+
+  test("should return an empty array if no contributions found", async () => {
+    const memberID = "nonexistent";
+    (prismaMock.financialContribuition.findMany as jest.Mock).mockResolvedValue(
+      [],
+    );
+
+    const contributions = await getMemberContributions(memberID);
+
+    expect(contributions).toEqual([]);
+    expect(prismaMock.financialContribuition.findMany).toHaveBeenCalledWith({
+      where: {
+        member_id: memberID,
+      },
+    });
   });
 });

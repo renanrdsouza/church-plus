@@ -17,6 +17,18 @@ export async function saveFinancialContribution(
   return savedFinancialContribution;
 }
 
+export async function getMemberContributions(
+  id: string,
+): Promise<IFinancialContribuition[]> {
+  const contributions = await prisma.financialContribuition.findMany({
+    where: {
+      member_id: id,
+    },
+  });
+
+  return contributions;
+}
+
 function typeToEnum(
   financialContribution: IFinancialContribuition,
 ): IFinancialContribuition {
