@@ -1,6 +1,7 @@
 import {
   getMemberContributions,
   saveFinancialContribution,
+  getContributionsByMonthAndYear,
 } from "../../models/financialContribution";
 import prisma from "../../infrastructure/database";
 import { validateFinancialContribution } from "../../models/validations";
@@ -116,5 +117,60 @@ describe("getMemberContributions", () => {
         member_id: memberID,
       },
     });
+  });
+});
+
+describe("getContributionsByMonthAndYear", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should query contributions correctly for a given month and year", async () => {
+    const mockContributions = [{ id: 1, amount: 100 }];
+    (prisma.financialContribuition.findMany as jest.Mock).mockResolvedValue(
+      mockContributions,
+    );
+
+    const year = "2023";
+    const month = "04";
+    const contributions = await getContributionsByMonthAndYear(year, month);
+
+    expect(contributions).toEqual(mockContributions);
+    expect(prisma.financialContribuition.findMany).toHaveBeenCalledWith({
+      where: {
+        created_at: {
+          gte: new Date("2023-04-01"),
+          lte: new Date("2023-04-31"),
+        },
+      },
+    });
+  });
+
+  it("should handle empty results", async () => {
+    (prisma.financialContribuition.findMany as jest.Mock).mockResolvedValue([]);
+
+    const year = "2023";
+    const month = "05";
+    const contributions = await getContributionsByMonthAndYear(year, month);
+
+    expect(contributions).toEqual([]);
+    expect(prisma.financialContribuition.findMany).toHaveBeenCalledWith({
+      where: {
+        created_at: {
+          gte: new Date("2023-05-01"),
+          lte: new Date("2023-05-31"),
+        },
+      },
+    });
+  });
+
+  it("should handle errors gracefully", async () => {
+    (prisma.financialContribuition.findMany as jest.Mock).mockRejectedValue(
+      new Error("Test error"),
+    );
+
+    await expect(getContributionsByMonthAndYear("2023", "04")).rejects.toThrow(
+      "Test error",
+    );
   });
 });
