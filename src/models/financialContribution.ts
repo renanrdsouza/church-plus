@@ -29,6 +29,22 @@ export async function getMemberContributions(
   return contributions;
 }
 
+export async function getContributionsByMonthAndYear(
+  year: string,
+  month: string,
+) {
+  const contributions = await prisma.financialContribuition.findMany({
+    where: {
+      created_at: {
+        gte: new Date(`${year}-${month}-01`),
+        lte: new Date(`${year}-${month}-31`),
+      },
+    },
+  });
+
+  return contributions;
+}
+
 function typeToEnum(
   financialContribution: IFinancialContribuition,
 ): IFinancialContribuition {
