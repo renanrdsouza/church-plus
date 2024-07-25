@@ -2,11 +2,16 @@ import {
   getMemberContributions,
   saveFinancialContribution,
   getContributionsByMonthAndYear,
+  updateFinancialContribution,
 } from "../../models/financialContribution";
 import prisma from "../../infrastructure/database";
 import { validateFinancialContribution } from "../../models/validations";
 import { FinancialContributionType } from "@/utils/enums";
 import { prismaMock } from "../singleton";
+import {
+  IFinancialContribuition,
+  IFinancialContributionPutRequest,
+} from "@/models/modelsInterfaces";
 
 jest.mock("../../infrastructure/database", () => ({
   financialContribuition: {
@@ -171,6 +176,47 @@ describe("getContributionsByMonthAndYear", () => {
 
     await expect(getContributionsByMonthAndYear("2023", "04")).rejects.toThrow(
       "Test error",
+    );
+  });
+});
+
+describe("updateFinancialContribution", () => {
+  const id = "test-id";
+  const putRequest: IFinancialContributionPutRequest = {
+    value: 100,
+    type: FinancialContributionType.DONATION, // Adjust this value based on your actual enum or expected types
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should update financial contribution successfully", async () => {
+    (prisma.financialContribuition.update as jest.Mock).mockResolvedValue({
+      id,
+      ...putRequest,
+      type: FinancialContributionType.DONATION, // Replace 'ENUM_VALUE' with the expected enum value after conversion
+    });
+
+    const result = await updateFinancialContribution(id, putRequest);
+
+    expect(prisma.financialContribuition.update).toHaveBeenCalledWith({
+      where: { id },
+      data: {
+        value: putRequest.value,
+        type: FinancialContributionType.DONATION, // Replace 'ENUM_VALUE' with the expected enum value after conversion
+      },
+    });
+    expect(result).toBeDefined();
+  });
+
+  it("should handle errors gracefully", async () => {
+    (prisma.financialContribuition.update as jest.Mock).mockRejectedValue(
+      new Error("Update failed"),
+    );
+
+    await expect(updateFinancialContribution(id, putRequest)).rejects.toThrow(
+      "Update failed",
     );
   });
 });

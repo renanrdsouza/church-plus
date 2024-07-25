@@ -1,4 +1,6 @@
-interface IMember {
+import { FinancialContributionType } from "@/utils/enums";
+
+export interface IMember {
   [key: string]: any;
   name: string;
   cpf: string;
@@ -15,7 +17,7 @@ interface IMember {
   updated_at?: Date;
 }
 
-interface IFinancialContribuition {
+export interface IFinancialContribuition {
   created_at?: Date;
   updated_at?: Date;
   value: number;
@@ -23,12 +25,12 @@ interface IFinancialContribuition {
   member_id: string;
 }
 
-interface IPhone {
+export interface IPhone {
   id?: string;
   phone_number: string;
 }
 
-interface IAddress {
+export interface IAddress {
   id?: string;
   zip_code: string;
   number: number;
@@ -39,7 +41,7 @@ interface IAddress {
   city: string;
 }
 
-interface IMemberPutRequest {
+export interface IMemberPutRequest {
   [key: string]: any;
   name?: string;
   birth_date?: Date;
@@ -51,4 +53,9 @@ interface IMemberPutRequest {
   profession?: string;
   address_list: IAddress[];
   phone_list: IPhone[];
+}
+
+export interface IFinancialContributionPutRequest {
+  value: number;
+  type: FinancialContributionType;
 }
