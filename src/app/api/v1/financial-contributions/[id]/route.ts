@@ -33,7 +33,7 @@ export async function PUT(
   const id: string = params.id;
   const body: IFinancialContributionPutRequest = await request.json();
 
-  if (!id)
+  if (id === undefined || id === null || id === "")
     return NextResponse.json(
       { error: "Missing financial contribution id" },
       { status: 400 },
@@ -47,9 +47,16 @@ export async function PUT(
 
     return NextResponse.json({ updatedFinancialContribution }, { status: 200 });
   } catch (err: any) {
-    return NextResponse.json(
-      { error: "Internal Server Error" },
-      { status: 500 },
-    );
+    if (err.message === "Financial Contribution not found") {
+      return NextResponse.json(
+        { error: "Financial Contribution not found" },
+        { status: 400 },
+      );
+    } else {
+      return NextResponse.json(
+        { error: "Internal Server Error" },
+        { status: 500 },
+      );
+    }
   }
 }

@@ -42,6 +42,12 @@ export async function updateFinancialContribution(
 ) {
   const financialContributionTypeFormated = typeToEnum(putRequest.type);
 
+  if (
+    !id.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)
+  ) {
+    throw new Error("Financial Contribution not found");
+  }
+
   const updatedFinancialContribution =
     await prisma.financialContribuition.update({
       where: { id },
@@ -51,7 +57,7 @@ export async function updateFinancialContribution(
       },
     });
 
-  return updateFinancialContribution;
+  return updatedFinancialContribution;
 }
 
 export async function getContributionsByMonthAndYear(
