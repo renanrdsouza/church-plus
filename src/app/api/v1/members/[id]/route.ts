@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { getMember, updateMember, deleteMember } from "@/models/memberService";
+import { IMemberPutRequest } from "@/models/modelsInterfaces";
 
 export async function GET(
   request: Request,

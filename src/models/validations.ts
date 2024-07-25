@@ -1,3 +1,11 @@
+import {
+  IAddress,
+  IPhone,
+  IFinancialContribuition,
+  IMember,
+  IMemberPutRequest,
+} from "./modelsInterfaces";
+
 function validateCPF(cpf: string): boolean {
   const cpfRegex = /^[0-9]{3}.[0-9]{3}.[0-9]{3}-[0-9]{2}$/;
 

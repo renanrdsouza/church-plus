@@ -1,4 +1,5 @@
 import { create, getAllMembers } from "@/models/memberService";
+import { IMember } from "@/models/modelsInterfaces";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {

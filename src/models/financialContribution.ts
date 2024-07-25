@@ -1,16 +1,23 @@
-import { FinancialContributionType } from "@/utils/enums";
 import prisma from "../infrastructure/database";
 import { validateFinancialContribution } from "./validations";
+import {
+  IFinancialContribuition,
+  IFinancialContributionPutRequest,
+} from "./modelsInterfaces";
+import { typeToEnum } from "@/utils/typeToEnum";
 
 export async function saveFinancialContribution(
   newFinancialContribution: IFinancialContribuition,
 ): Promise<IFinancialContribuition> {
-  const financialContributionFormated = typeToEnum(newFinancialContribution);
+  const financialContributionTypeFormated = typeToEnum(
+    newFinancialContribution.type,
+  );
+  newFinancialContribution.type = financialContributionTypeFormated;
   validateFinancialContribution(newFinancialContribution);
 
   const savedFinancialContribution = await prisma.financialContribuition.create(
     {
-      data: financialContributionFormated,
+      data: newFinancialContribution,
     },
   );
 
@@ -29,6 +36,30 @@ export async function getMemberContributions(
   return contributions;
 }
 
+export async function updateFinancialContribution(
+  id: string,
+  putRequest: IFinancialContributionPutRequest,
+) {
+  const financialContributionTypeFormated = typeToEnum(putRequest.type);
+
+  if (
+    !id.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)
+  ) {
+    throw new Error("Financial Contribution not found");
+  }
+
+  const updatedFinancialContribution =
+    await prisma.financialContribuition.update({
+      where: { id },
+      data: {
+        value: putRequest.value,
+        type: financialContributionTypeFormated,
+      },
+    });
+
+  return updatedFinancialContribution;
+}
+
 export async function getContributionsByMonthAndYear(
   year: string,
   month: string,
@@ -43,20 +74,4 @@ export async function getContributionsByMonthAndYear(
   });
 
   return contributions;
-}
-
-function typeToEnum(
-  financialContribution: IFinancialContribuition,
-): IFinancialContribuition {
-  const typeMap: { [key: string]: string } = {
-    Tithe: FinancialContributionType.TITHE,
-    Offering: FinancialContributionType.OFFERING,
-    Donation: FinancialContributionType.DONATION,
-    Other: FinancialContributionType.OTHER,
-  };
-
-  financialContribution.type =
-    typeMap[financialContribution.type] || typeMap.Other;
-
-  return financialContribution;
 }

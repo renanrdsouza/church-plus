@@ -2,6 +2,7 @@ import { Prisma } from "@prisma/client";
 import prisma from "../infrastructure/database";
 import { Status } from "@/utils/enums";
 import { validateNewMember, validateUpdateMember } from "./validations";
+import { IMember, IMemberPutRequest } from "./modelsInterfaces";
 
 export async function query(query: string) {
   const preparedQuery = Prisma.sql([query]);
@@ -19,7 +20,7 @@ export async function query(query: string) {
 export async function create(newMember: IMember) {
   const parsedBirthDate = new Date(newMember.birth_date).toISOString();
   const parsedBaptismDate = new Date(newMember.baptism_date).toISOString();
-
+  validateNewMember(newMember);
   const existingMember = await prisma.member.findFirst({
     where: {
       cpf: newMember.cpf,
