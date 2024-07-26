@@ -1,4 +1,5 @@
 import {
+  deleteFinancialContribution,
   getMemberContributions,
   updateFinancialContribution,
 } from "@/models/financialContribution";
@@ -47,11 +48,39 @@ export async function PUT(
 
     return NextResponse.json({ updatedFinancialContribution }, { status: 200 });
   } catch (err: any) {
-    if (err.message === "Financial Contribution not found") {
+    if (err.message === "Malformed financial contribution id") {
+      return NextResponse.json({ error: err.message }, { status: 400 });
+    } else {
       return NextResponse.json(
-        { error: "Financial Contribution not found" },
-        { status: 400 },
+        { error: "Internal Server Error" },
+        { status: 500 },
       );
+    }
+  }
+}
+
+export async function DELETE(
+  request: Request,
+  { params }: { params: { id: string } },
+) {
+  const id = params.id;
+
+  if (id === undefined || id === null || id === "")
+    return NextResponse.json(
+      { error: "Missing financial contribution id" },
+      { status: 400 },
+    );
+
+  try {
+    await deleteFinancialContribution(id);
+
+    return NextResponse.json(
+      { message: "Financial contribution deleted." },
+      { status: 200 },
+    );
+  } catch (err: any) {
+    if (err.message === "Malformed financial contribution id") {
+      return NextResponse.json({ error: err.message }, { status: 400 });
     } else {
       return NextResponse.json(
         { error: "Internal Server Error" },

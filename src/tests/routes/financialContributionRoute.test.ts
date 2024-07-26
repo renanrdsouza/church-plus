@@ -1,6 +1,7 @@
 import { POST } from "@/app/api/v1/financial-contributions/route";
-import { GET } from "@/app/api/v1/financial-contributions/[id]/route";
+import { DELETE, GET } from "@/app/api/v1/financial-contributions/[id]/route";
 import {
+  deleteFinancialContribution,
   getMemberContributions,
   saveFinancialContribution,
 } from "@/models/financialContribution";
@@ -9,6 +10,7 @@ import { NextResponse } from "next/server";
 jest.mock("../../models/financialContribution", () => ({
   saveFinancialContribution: jest.fn(),
   getMemberContributions: jest.fn(),
+  deleteFinancialContribution: jest.fn(),
 }));
 
 jest.mock("next/server", () => ({
@@ -161,6 +163,84 @@ describe("GET", () => {
     expect(NextResponse.json).toHaveBeenCalledWith(
       { error: "Internal Server Error" },
       { status: 500 },
+    );
+  });
+});
+
+describe("DELETE", () => {
+  it("should return 400 if id is missing", async () => {
+    const request = new Request(
+      "http://localhost:3000/api/v1/financial-contributions/1",
+      {
+        method: "DELETE",
+      },
+    );
+    const params = { params: { id: "" } };
+
+    const response = await DELETE(request, params);
+    expect(response).toEqual(
+      NextResponse.json(
+        { error: "Missing financial contribution id" },
+        { status: 400 },
+      ),
+    );
+  });
+
+  it("should return 200 on successful deletion", async () => {
+    const request = new Request(
+      "http://localhost:3000/api/v1/financial-contributions/123",
+      {
+        method: "DELETE",
+      },
+    );
+    const params = { params: { id: "123" } };
+    (deleteFinancialContribution as jest.Mock).mockResolvedValue("");
+
+    const response = await DELETE(request, params);
+    expect(response).toEqual(
+      NextResponse.json(
+        { message: "Financial contribution deleted." },
+        { status: 200 },
+      ),
+    );
+  });
+
+  it("should return 400 for malformed financial contribution id", async () => {
+    const request = new Request(
+      "http://localhost:3000/api/v1/financial-contributions/123",
+      {
+        method: "DELETE",
+      },
+    );
+    const params = { params: { id: "123" } };
+    (deleteFinancialContribution as jest.Mock).mockRejectedValue(
+      new Error("Malformed financial contribution id"),
+    );
+
+    const response = await DELETE(request, params);
+    expect(response).toEqual(
+      NextResponse.json(
+        { error: "Malformed financial contribution id" },
+        { status: 400 },
+      ),
+    );
+  });
+
+  it("should return 500 on internal server error", async () => {
+    const request = new Request(
+      "http://localhost:3000/api/v1/financial-contributions/123",
+      {
+        method: "DELETE",
+      },
+    );
+    const params = { params: { id: "123" } };
+    (deleteFinancialContribution as jest.Mock).mockRejectedValue(
+      new Error("Internal Server Error"),
+    );
+
+    const response = await DELETE(request, params);
+    expect(response).toEqual(
+      NextResponse.json({ error: "Internal Server Error" }, { status: 500 }),
     );
   });
 });
