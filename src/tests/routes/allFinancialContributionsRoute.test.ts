@@ -10,7 +10,7 @@ jest.mock("next/server", () => ({
 }));
 
 // Mock contributionsService
-jest.mock("./contributionsService", () => ({
+jest.mock("../../models/financialContribution", () => ({
   getContributionsByMonthAndYear: jest.fn(),
 }));
 

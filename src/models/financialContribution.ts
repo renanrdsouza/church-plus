@@ -45,7 +45,7 @@ export async function updateFinancialContribution(
   if (
     !id.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)
   ) {
-    throw new Error("Financial Contribution not found");
+    throw new Error("Malformed financial contribution id");
   }
 
   const updatedFinancialContribution =
@@ -74,4 +74,16 @@ export async function getContributionsByMonthAndYear(
   });
 
   return contributions;
+}
+
+export async function deleteFinancialContribution(id: string) {
+  if (
+    !id.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)
+  ) {
+    throw new Error("Malformed financial contribution id");
+  }
+
+  await prisma.financialContribuition.delete({
+    where: { id },
+  });
 }

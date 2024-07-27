@@ -181,7 +181,7 @@ describe("getContributionsByMonthAndYear", () => {
 });
 
 describe("updateFinancialContribution", () => {
-  const id = "test-id";
+  const id = "b29892b9-1d14-4e5d-b75a-39831061bb0a";
   const putRequest: IFinancialContributionPutRequest = {
     value: 100,
     type: FinancialContributionType.DONATION, // Adjust this value based on your actual enum or expected types
