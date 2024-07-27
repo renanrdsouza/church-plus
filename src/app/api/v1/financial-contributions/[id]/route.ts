@@ -73,19 +73,22 @@ export async function DELETE(
 
   try {
     await deleteFinancialContribution(id);
-
     return NextResponse.json(
       { message: "Financial contribution deleted." },
       { status: 200 },
     );
   } catch (err: any) {
+    let status = 500;
+    let errorMessage = "Internal Server Error";
+
     if (err.message === "Malformed financial contribution id") {
-      return NextResponse.json({ error: err.message }, { status: 400 });
-    } else {
-      return NextResponse.json(
-        { error: "Internal Server Error" },
-        { status: 500 },
-      );
+      status = 400;
+      errorMessage = "Malformed financial contribution id";
+    } else if (err.message.includes("Record to delete does not exist.")) {
+      status = 404;
+      errorMessage = "Record to delete does not exist.";
     }
+
+    return NextResponse.json({ error: errorMessage }, { status });
   }
 }
