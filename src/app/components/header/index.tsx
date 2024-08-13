@@ -15,11 +15,6 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 
 export default function Example() {
-  const navigation = [
-    { name: "Membresia", href: "/membros", current: true },
-    { name: "Financeiro", href: "/financeiro", current: false },
-  ];
-
   const [isOpen, setIsOpen] = useState(true);
   const pathname = usePathname();
 
