@@ -14,10 +14,6 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(" ");
-}
-
 export default function Example() {
   const navigation = [
     { name: "Membresia", href: "/membros", current: true },
