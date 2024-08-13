@@ -58,8 +58,8 @@ export default function Example() {
                 </Link>
                 <Link
                   key="Financeiro"
-                  href="/financeiro"
-                  className={`link ${pathname === "/financeiro" ? "text-slate-700 border-b-4 border-slate-500 px-3 py-2 text-lg font-medium" : "text-slate-500 border-b-4 border-transparent hover:border-slate-500 px-3 py-2 transition-all duration-300 text-lg font-medium"}`}
+                  href="/financas"
+                  className={`link ${pathname === "/financas" ? "text-slate-700 border-b-4 border-slate-500 px-3 py-2 text-lg font-medium" : "text-slate-500 border-b-4 border-transparent hover:border-slate-500 px-3 py-2 transition-all duration-300 text-lg font-medium"}`}
                 >
                   Financeiro
                 </Link>
@@ -135,10 +135,10 @@ export default function Example() {
           </Link>
 
           <Link
-            href="/financeiro"
+            href="/financas"
             className={`
               link ${
-                pathname === "/financeiro"
+                pathname === "/financas"
                   ? "bg-gray-500 text-white border-b-2 px-3 py-2 text-base font-medium"
                   : "text-gray-500 hover:bg-gray-700 hover:text-white border-b-2 px-3 py-2 text-base font-medium"
               }
