@@ -3,8 +3,8 @@ import Container from "../components/container";
 import { IMember } from "@/models/modelsInterfaces";
 
 async function getData() {
-  const baseUrl = "http://localhost:3000/api/v1";
-  const response = await fetch(`${baseUrl}/members/`);
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const response = await fetch(`${baseUrl}/api/v1/members/`);
   const { members } = await response.json();
 
   return members;
