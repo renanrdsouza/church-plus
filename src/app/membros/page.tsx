@@ -1,17 +1,22 @@
+"use client";
 import Link from "next/link";
 import Container from "../components/container";
+import { useEffect, useState } from "react";
 import { IMember } from "@/models/modelsInterfaces";
 
-async function getData() {
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  const response = await fetch(`${baseUrl}/api/v1/members/`);
-  const { members } = await response.json();
+const Membros = () => {
+  const [members, setMembers] = useState<IMember[]>([]);
 
-  return members;
-}
+  useEffect(() => {
+    const fetchData = async () => {
+      const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+      const response = await fetch(`${baseUrl}/api/v1/members/`);
+      const data = await response.json();
+      setMembers(data.members);
+    };
 
-const Membros = async () => {
-  const members = await getData();
+    fetchData();
+  }, []);
 
   return (
     <Container>
@@ -55,14 +60,9 @@ const Membros = async () => {
         </Link>
 
         <ul role="list" className="divide-y px-10 divide-gray-300">
-          {members.map((member: IMember) => (
+          {members.map((member) => (
             <li key={member.id} className="flex justify-between gap-x-20 py-5">
               <div className="flex min-w-0 gap-x-4">
-                {/* <img
-                  alt=""
-                  src={member.imageUrl}
-                  className="h-12 w-12 flex-none rounded-full bg-gray-50"
-                /> */}
                 <div className="min-w-0 flex-auto">
                   <p className="text-sm font-semibold leading-6 text-gray-900">
                     {member.name}
