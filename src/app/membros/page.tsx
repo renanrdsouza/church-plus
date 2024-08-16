@@ -63,11 +63,11 @@ const Membros = () => {
           {members.map((member) => (
             <li key={member.id} className="flex justify-between gap-x-20 py-5">
               <div className="flex min-w-0 gap-x-4">
-                <div className="min-w-0 flex-auto">
+                <div className="flex flex-col justify-center min-w-0 flex-auto">
                   <p className="text-sm font-semibold leading-6 text-gray-900">
                     {member.name}
                   </p>
-                  <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                  <p className="hidden sm:block mt-1 truncate text-xs leading-5 text-gray-500">
                     {member.email}
                   </p>
                 </div>
@@ -75,11 +75,13 @@ const Membros = () => {
               <div className="flex gap-x-3 max-w-56 shrink-0 sm:flex sm:items-end">
                 <Link
                   href="#"
-                  className="text-sm leading-6 text-gray-900 p-3 bg-slate-400 rounded-md"
+                  className="p-2 sm:p-3 bg-slate-500 rounded-md text-white text-base hover:bg-slate-300 hover:text-slate-600 transition-all duration-300"
                 >
                   Editar
                 </Link>
-                <button className="bg-red-400 p-3 rounded-md">Excluir</button>
+                <button className="bg-red-400 p-2 sm:p-3 rounded-md hover:bg-red-600 hover:text-white transition-all duration-300">
+                  Excluir
+                </button>
               </div>
             </li>
           ))}
