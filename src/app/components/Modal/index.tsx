@@ -1,4 +1,14 @@
-const Modal = ({ open, onClose, children }) => {
+import { ReactNode } from "react";
+
+const Modal = ({
+  open,
+  onClose,
+  children,
+}: {
+  open: boolean;
+  onClose: () => void;
+  children: ReactNode;
+}) => {
   return (
     <div
       onClick={onClose}
