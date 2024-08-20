@@ -3,13 +3,16 @@ import Link from "next/link";
 import Container from "../components/container";
 import { useEffect, useState } from "react";
 import { IMember } from "@/models/modelsInterfaces";
+import Modal from "@/app/components/Modal";
 
 const Membros = () => {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const [members, setMembers] = useState<IMember[]>([]);
+  const [open, setIsOpen] = useState<boolean>(false);
+  const [itemToDelete, setItemToDelete] = useState<string>("");
 
   useEffect(() => {
     const fetchData = async () => {
-      const baseUrl = process.env.NEXT_PUBLIC_API_URL;
       const response = await fetch(`${baseUrl}/api/v1/members/`);
       const data = await response.json();
       setMembers(data.members);
@@ -17,6 +20,16 @@ const Membros = () => {
 
     fetchData();
   }, []);
+
+  const handleDeleteItem = async (id: string) => {
+    await fetch(`${baseUrl}/api/v1/members/${id}`, {
+      method: "DELETE",
+    });
+
+    const filteredItems = members.filter((member) => member.id !== id);
+    setMembers([...filteredItems]);
+    setIsOpen(false);
+  };
 
   return (
     <Container>
@@ -79,13 +92,46 @@ const Membros = () => {
                 >
                   Editar
                 </Link>
-                <button className="bg-red-400 p-2 sm:p-3 rounded-md hover:bg-red-600 hover:text-white transition-all duration-300">
+                <button
+                  onClick={() => {
+                    setIsOpen(true),
+                      setItemToDelete(member.id),
+                      console.log(itemToDelete);
+                  }}
+                  className="bg-red-400 p-2 sm:p-3 rounded-md hover:bg-red-600 hover:text-white transition-all duration-300"
+                >
                   Excluir
                 </button>
               </div>
             </li>
           ))}
         </ul>
+        <Modal open={open} onClose={() => setIsOpen(false)}>
+          <div className="text-center w-56">
+            <div className="mx-auto my-4 w-48">
+              <h3 className="text-lg font-black text-gray-800">
+                Confirmar exclusão
+              </h3>
+              <p className="text-sm text-gray-500">
+                Tem certeza que deseja deletar este item?
+              </p>
+            </div>
+            <div className="flex gap-4">
+              <button
+                onClick={() => handleDeleteItem(itemToDelete)}
+                className="shadow-md text-white rounded-md p-1 bg-red-400 w-full hover:scale-110 transition-all duration-200"
+              >
+                Sim
+              </button>
+              <button
+                className="shadow-md bg-white rounded-md p-1 w-full hover:scale-110 transition-all duration-200"
+                onClick={() => setIsOpen(false)}
+              >
+                Não
+              </button>
+            </div>
+          </div>
+        </Modal>
       </main>
     </Container>
   );
