@@ -1,7 +1,17 @@
-export default function Loading() {
+import { ArrowPathIcon } from "@heroicons/react/24/outline";
+
+const Loading = () => {
   return (
-    <main className="flex justify-center items-center mt-96">
-      <h1 className="text-2xl">Carregando informações...</h1>
-    </main>
+    <div className="flex flex-col justify-center items-center h-screen">
+      <div
+        className="spinner-border animate-spin inline-block w-8 h-8 border-4 rounded-full"
+        role="status"
+      >
+        <ArrowPathIcon />
+      </div>
+      <span className="text-2xl">Carregando...</span>
+    </div>
   );
-}
+};
+
+export default Loading;
