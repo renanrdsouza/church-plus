@@ -25,14 +25,6 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  const allowedOrigin =
-    "https://church-plus-git-main-renanrdsouzas-projects.vercel.app";
-
-  const headers = new Headers();
-  headers.set("Access-Control-Allow-Origin", allowedOrigin);
-  headers.set("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE");
-  headers.set("Access-Control-Allow-Headers", "Content-Type, Authorization");
-
   try {
     const members = await getAllMembers();
 
