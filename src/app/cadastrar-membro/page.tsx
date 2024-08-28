@@ -5,6 +5,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 const phoneSchema = z
   .string()
@@ -65,13 +66,15 @@ const schema = z.object({
     .string()
     .min(3, { message: "Preencha corretamente a profissão" })
     .regex(/^[a-zA-Z\s]{3,}$/, "Preencha corretamente a profissão"),
-  street: z.string(),
-  city: z.string(),
-  uf: z.string().max(2, { message: "UF deve ter no máximo 2 caracteres" }),
-  cep: z.string(),
-  number: z.string(),
-  neighborhood: z.string(),
-  complement: z.string(),
+  street: z.string().min(1, { message: "Rua é obrigatória" }),
+  city: z.string().min(1, { message: "Cidade é obrigatória" }),
+  uf: z.string().length(2, { message: "UF deve ter exatamente 2 caracteres" }),
+  cep: z.string().regex(/^\d{5}-\d{3}$/, {
+    message: "CEP deve obedecer o formato 00000-000",
+  }),
+  number: z.string().min(1, { message: "Número é obrigatório" }),
+  neighborhood: z.string().min(1, { message: "Bairro é obrigatório" }),
+  complement: z.string().optional(),
   phones: z
     .array(phoneSchema)
     .refine((phones) => phones.length > 0 && phones[0] !== "", {
@@ -88,6 +91,7 @@ type CreateUserFormData = z.infer<typeof schema>;
 const RegisterMember = () => {
   const [checked, setChecked] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+  const router = useRouter();
 
   const {
     register,
@@ -98,7 +102,7 @@ const RegisterMember = () => {
     resolver: zodResolver(schema),
   });
 
-  const onSubmit = (data: CreateUserFormData) => {
+  const onSubmit = async (data: CreateUserFormData) => {
     const phones = data.phones
       .filter((phone) => phone !== "")
       .map((phone) => {
@@ -128,13 +132,15 @@ const RegisterMember = () => {
       ],
     };
 
-    fetch(`${baseUrl}/api/v1/members`, {
+    await fetch(`${baseUrl}/api/v1/members`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify(formatedData),
     });
+
+    router.push("/membros");
   };
 
   return (
@@ -465,6 +471,7 @@ const RegisterMember = () => {
                       type="text"
                       autoComplete="address-level1"
                       maxLength={2}
+                      placeholder="ex: RJ"
                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                     {errors.uf && (
@@ -488,6 +495,7 @@ const RegisterMember = () => {
                       {...register("cep")}
                       type="text"
                       autoComplete="cep"
+                      placeholder="00000-000"
                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                     />
                     {errors.cep && (
