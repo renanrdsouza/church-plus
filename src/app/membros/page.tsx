@@ -43,7 +43,7 @@ const Membros = () => {
 
   return (
     <Container>
-      <main className="flex flex-col justify-center p-3">
+      <main className="flex flex-col p-3 h-screen">
         <div className="flex gap-x-3 mt-4">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
@@ -84,7 +84,7 @@ const Membros = () => {
 
         <ul role="list" className="divide-y px-10 divide-gray-300">
           {members.map((member) => (
-            <li key={member.id} className="flex justify-between gap-x-20 py-5">
+            <li key={member.id} className="flex justify-between gap-x-30 py-5">
               <div className="flex min-w-0 gap-x-4">
                 <div className="flex flex-col justify-center min-w-0 flex-auto">
                   <p className="text-sm font-semibold leading-6 text-gray-900">
@@ -95,10 +95,10 @@ const Membros = () => {
                   </p>
                 </div>
               </div>
-              <div className="flex gap-x-3 max-w-56 shrink-0 sm:flex sm:items-end">
+              <div className="flex gap-x-1 sm:gap-x-3 max-w-56 shrink-0 sm:flex items-center sm:items-end">
                 <Link
                   href="#"
-                  className="p-2 sm:p-3 bg-slate-500 rounded-md text-white text-base hover:bg-slate-300 hover:text-slate-600 transition-all duration-300"
+                  className="p-2 sm:p-3 h-11 bg-slate-500 rounded-md text-white text-base hover:bg-slate-300 hover:text-slate-600 transition-all duration-300"
                 >
                   Editar
                 </Link>
@@ -108,7 +108,7 @@ const Membros = () => {
                       setItemToDelete(member.id),
                       console.log(itemToDelete);
                   }}
-                  className="bg-red-400 p-2 sm:p-3 rounded-md hover:bg-red-600 hover:text-white transition-all duration-300"
+                  className="bg-red-400 h-11 p-2 sm:p-3 text-center rounded-md hover:bg-red-600 hover:text-white transition-all duration-300"
                 >
                   Excluir
                 </button>
