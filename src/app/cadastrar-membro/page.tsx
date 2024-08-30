@@ -4,7 +4,7 @@ import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import Link from "next/link";
-import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
 
 const phoneSchema = z
@@ -13,83 +13,93 @@ const phoneSchema = z
     message: "Telefone deve obedecer o formato (xx) xxxxx-xxxx",
   });
 
-const schema = z.object({
-  fullname: z
-    .string()
-    .min(1, { message: "Nome completo é obrigatório" })
-    .regex(
-      /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/,
-      "Apenas letras são permitidas",
+const schema = z
+  .object({
+    fullname: z
+      .string()
+      .min(1, { message: "Nome completo é obrigatório" })
+      .regex(
+        /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/,
+        "Apenas letras são permitidas",
+      ),
+    email: z.string().email("Deve ser um email válido"),
+    cpf: z
+      .string()
+      .min(1, { message: "CPF é obrigatório" })
+      .regex(
+        /^[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}$/,
+        "CPF deve obedecer o formato correto xxx.xxx.xxx-xx",
+      ),
+    birthdate: z
+      .string()
+      .min(1, { message: "Data de nascimento é obrigatória" })
+      .refine((val) => !isNaN(Date.parse(val)), {
+        message: "Data de nascimento inválida",
+      }),
+    baptismdate: z.string().optional().or(z.literal("")),
+    rememberBaptismDate: z.boolean(),
+    fathername: z
+      .string()
+      .min(1, { message: "Nome completo é obrigatório" })
+      .regex(
+        /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/,
+        "Apenas letras são permitidas",
+      ),
+    mothername: z
+      .string()
+      .min(1, { message: "Nome completo é obrigatório" })
+      .regex(
+        /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/,
+        "Apenas letras são permitidas",
+      ),
+    education: z.enum(
+      [
+        "fundamental-incompleto",
+        "fundamental-completo",
+        "medio-incompleto",
+        "medio-completo",
+        "superior-incompleto",
+        "superior-completo",
+        "outro",
+      ],
+      {
+        errorMap: () => ({ message: "Escolha uma opção válida" }),
+      },
     ),
-  email: z.string().email("Deve ser um email válido"),
-  cpf: z
-    .string()
-    .min(1, { message: "CPF é obrigatório" })
-    .regex(
-      /^[0-9]{3}\.[0-9]{3}\.[0-9]{3}-[0-9]{2}$/,
-      "CPF deve obedecer o formato correto xxx.xxx.xxx-xx",
-    ),
-  birthdate: z
-    .string()
-    .date()
-    .min(1, { message: "Data de nascimento é obrigatória" }),
-  baptismdate: z.string().optional().or(z.literal("")),
-  fathername: z
-    .string()
-    .min(1, { message: "Nome completo é obrigatório" })
-    .regex(
-      /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/,
-      "Apenas letras são permitidas",
-    ),
-  mothername: z
-    .string()
-    .min(1, { message: "Nome completo é obrigatório" })
-    .regex(
-      /^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžæÀÁÂÄÃÅĄĆČĖĘÈÉÊÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$/,
-      "Apenas letras são permitidas",
-    ),
-  education: z.enum(
-    [
-      "fundamental-incompleto",
-      "fundamental-completo",
-      "medio-incompleto",
-      "medio-completo",
-      "superior-incompleto",
-      "superior-completo",
-      "outro",
-    ],
-    {
-      errorMap: () => ({ message: "Escolha uma opção válida" }),
-    },
-  ),
-  profession: z
-    .string()
-    .min(3, { message: "Preencha corretamente a profissão" })
-    .regex(/^[a-zA-Z\s]{3,}$/, "Preencha corretamente a profissão"),
-  street: z.string().min(1, { message: "Rua é obrigatória" }),
-  city: z.string().min(1, { message: "Cidade é obrigatória" }),
-  uf: z.string().length(2, { message: "UF deve ter exatamente 2 caracteres" }),
-  cep: z.string().regex(/^\d{5}-\d{3}$/, {
-    message: "CEP deve obedecer o formato 00000-000",
-  }),
-  number: z.string().min(1, { message: "Número é obrigatório" }),
-  neighborhood: z.string().min(1, { message: "Bairro é obrigatório" }),
-  complement: z.string().optional(),
-  phones: z
-    .array(phoneSchema)
-    .refine((phones) => phones.length > 0 && phones[0] !== "", {
-      message: "Pelo menos 1(um) telefone é obrigatório",
-      path: [0], // path to the first phone
-    })
-    .refine((phones) => phones.length <= 3, {
-      message: "Você pode adicionar no máximo 3 telefones",
+    profession: z
+      .string()
+      .min(3, { message: "Preencha corretamente a profissão" })
+      .regex(/^[a-zA-Z\s]{3,}$/, "Preencha corretamente a profissão"),
+    street: z.string().min(1, { message: "Rua é obrigatória" }),
+    city: z.string().min(1, { message: "Cidade é obrigatória" }),
+    uf: z
+      .string()
+      .length(2, { message: "UF deve ter exatamente 2 caracteres" }),
+    cep: z.string().regex(/^\d{5}-\d{3}$/, {
+      message: "CEP deve obedecer o formato 00000-000",
     }),
-});
+    number: z.string().min(1, { message: "Número é obrigatório" }),
+    neighborhood: z.string().min(1, { message: "Bairro é obrigatório" }),
+    complement: z.string().optional(),
+    phones: z
+      .array(phoneSchema)
+      .refine((phones) => phones.length > 0 && phones[0] !== "", {
+        message: "Pelo menos 1(um) telefone é obrigatório",
+        path: [0],
+      })
+      .refine((phones) => phones.length <= 3, {
+        message: "Você pode adicionar no máximo 3 telefones",
+      }),
+  })
+  .refine((data) => data.rememberBaptismDate || data.baptismdate, {
+    message:
+      "Data de batismo é obrigatória, caso não se lembre, marque a opção abaixo",
+    path: ["baptismdate"],
+  });
 
 type CreateUserFormData = z.infer<typeof schema>;
 
 const RegisterMember = () => {
-  const [checked, setChecked] = useState(false);
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
 
@@ -97,10 +107,13 @@ const RegisterMember = () => {
     register,
     handleSubmit,
     control,
+    watch,
     formState: { errors },
   } = useForm<CreateUserFormData>({
     resolver: zodResolver(schema),
   });
+
+  const rememberBaptismDate = watch("rememberBaptismDate");
 
   const onSubmit = async (data: CreateUserFormData) => {
     const phones = data.phones
@@ -132,15 +145,33 @@ const RegisterMember = () => {
       ],
     };
 
-    await fetch(`${baseUrl}/api/v1/members`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formatedData),
-    });
+    try {
+      const response = await fetch(`${baseUrl}/api/v1/members`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formatedData),
+      });
 
-    router.push("/membros");
+      if (response.ok) {
+        toast.success("Membro cadastrado com sucesso!", {
+          duration: 4000,
+        });
+        setTimeout(() => {
+          router.push("/membros");
+        }, 4000);
+      } else {
+        const { error } = await response.json();
+        toast.error(
+          error === "Member already exists"
+            ? "Membro já cadastrado"
+            : "Erro ao cadastrar membro.",
+        );
+      }
+    } catch (error: any) {
+      toast.error(error.message);
+    }
   };
 
   return (
@@ -261,8 +292,8 @@ const RegisterMember = () => {
                       {...register("baptismdate")}
                       type="date"
                       autoComplete="baptismdate"
-                      disabled={checked}
-                      className={`${checked ? "block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 opacity-50" : "block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}`}
+                      disabled={rememberBaptismDate}
+                      className={`${rememberBaptismDate ? "block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 opacity-50" : "block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}`}
                     />
                     {errors.baptismdate && (
                       <p className="text-red-500 text-sm mt-2">
@@ -276,7 +307,7 @@ const RegisterMember = () => {
                       <input
                         type="checkbox"
                         id="remember"
-                        onChange={(e) => setChecked(e.target.checked)}
+                        {...register("rememberBaptismDate")}
                       />
                     </div>
                     <label
@@ -632,6 +663,7 @@ const RegisterMember = () => {
             >
               Save
             </button>
+            <Toaster />
           </div>
         </form>
       </main>
