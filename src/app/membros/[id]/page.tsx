@@ -1,6 +1,6 @@
 "use client";
 import Container from "@/app/components/container";
-import { IMember } from "@/models/modelsInterfaces";
+import { IFinancialContribuition, IMember } from "@/models/modelsInterfaces";
 import { useEffect, useState } from "react";
 import Loading from "../loading";
 import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
@@ -40,7 +40,7 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
     }
   };
 
-  const handleLastContribution = (contributions: any) => {
+  const handleLastContribution = (contributions: IFinancialContribuition[]) => {
     if (contributions.length > 0) {
       const lastContribution =
         (contributions[contributions.length - 1].value / 100)
@@ -52,7 +52,9 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
     }
   };
 
-  const handleLastFinancialContributionType = (contributions: any) => {
+  const handleLastFinancialContributionType = (
+    contributions: IFinancialContribuition[],
+  ) => {
     const translatedTypes: { [key: string]: string } = {
       Tithe: "Dízimo",
       Offering: "Oferta",
