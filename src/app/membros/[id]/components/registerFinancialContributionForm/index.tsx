@@ -5,6 +5,8 @@ import { z } from "zod";
 
 interface RegisterFinancialContributionFormProps {
   memberId: string;
+  modifyLastContributionValue: (value: string) => void;
+  modifyLastContributionType: (value: string) => void;
 }
 
 const schema = z.object({
@@ -36,6 +38,23 @@ const RegisterFinancialContributionForm = (
     resolver: zodResolver(schema),
   });
 
+  const handleLastContribution = (value: any) => {
+    props.modifyLastContributionValue(
+      (value / 100).toFixed(2).replace(".", ","),
+    );
+  };
+
+  const handleLastFinancialContributionType = (type: any) => {
+    const translatedTypes: { [key: string]: string } = {
+      Tithe: "Dízimo",
+      Offering: "Oferta",
+      Donation: "Doação",
+      Other: "Outro",
+    };
+
+    props.modifyLastContributionType(translatedTypes[type]);
+  };
+
   const onSubmit = async (data: RegisterFinancialContributionData) => {
     const body = {
       member_id: memberId,
@@ -52,6 +71,9 @@ const RegisterFinancialContributionForm = (
     });
 
     if (response.ok) {
+      handleLastContribution(body.value);
+      handleLastFinancialContributionType(body.type);
+
       toast.success("Contribuição financeira inserida!", {
         duration: 2000,
       });
@@ -63,40 +85,46 @@ const RegisterFinancialContributionForm = (
   };
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col">
-      <label className="text-base">
-        Valor:
-        <input
-          type="number"
-          placeholder="0,00"
-          {...register("value")}
-          className="p-2 outline-none border-gray-300 rounded-md w-full mt-3"
-        />
-        {errors.value && (
-          <p className="text-red-500 text-sm mt-2">{errors.value.message}</p>
-        )}
-      </label>
-      <div className="flex flex-col">
-        <label className="text-base mt-3">Tipo de contribuição:</label>
-        <select
-          id="contributionType"
-          defaultValue="chooseOne"
-          className="mt-3 p-2 rounded-md"
-          {...register("contributionType")}
-        >
-          <option value="chooseOne" disabled>
-            Escolha uma opção
-          </option>
-          <option value="Tithe">Dízimo</option>
-          <option value="Offering">Oferta</option>
-          <option value="Donation">Doação</option>
-          <option value="Other">Outros</option>
-        </select>
-        {errors.contributionType && (
-          <p className="text-red-500 text-sm mt-2">
-            {errors.contributionType.message}
-          </p>
-        )}
+    <form onSubmit={handleSubmit(onSubmit)} className="">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <div>
+          <label className="text-base">
+            Valor:
+            <input
+              type="number"
+              placeholder="0,00"
+              {...register("value")}
+              className="p-2 outline-none border-gray-300 rounded-md w-full mt-3"
+            />
+            {errors.value && (
+              <p className="text-red-500 text-sm mt-2">
+                {errors.value.message}
+              </p>
+            )}
+          </label>
+        </div>
+        <div className="flex flex-col justify-between">
+          <label className="text-base">Tipo de contribuição:</label>
+          <select
+            id="contributionType"
+            defaultValue="chooseOne"
+            className="p-2 rounded-md"
+            {...register("contributionType")}
+          >
+            <option value="chooseOne" disabled>
+              Escolha uma opção
+            </option>
+            <option value="Tithe">Dízimo</option>
+            <option value="Offering">Oferta</option>
+            <option value="Donation">Doação</option>
+            <option value="Other">Outros</option>
+          </select>
+          {errors.contributionType && (
+            <p className="text-red-500 text-sm mt-2">
+              {errors.contributionType.message}
+            </p>
+          )}
+        </div>
       </div>
       <button
         type="submit"

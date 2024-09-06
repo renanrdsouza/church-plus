@@ -249,7 +249,7 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
             <div className="grid grid-cols-1 gap-5 sm:gap-x-5 mt-5">
               <div className="p-4 rounded-md border-2 shadow-sm">
                 <div className="flex justify-between">
-                  <h2 className="text-xl font-semibold ">
+                  <h2 className="text-base font-semibold ">
                     Última contribuição
                   </h2>
                   <p>Tipo: {lastFinancialContributionType}</p>
@@ -260,10 +260,12 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
                 </p>
               </div>
               <div className="flex flex-col gap-3 sm:col-start-1 sm:col-end-3">
-                <h2 className="text-xl font-semibold">
-                  Cadastrar nova contribuição
-                </h2>
-                <RegisterFinancialContributionForm memberId={id} />
+                <h2 className="text-xl font-semibold">Cadastrar novo valor</h2>
+                <RegisterFinancialContributionForm
+                  memberId={id}
+                  modifyLastContributionValue={setLastContribution}
+                  modifyLastContributionType={setLastFinancialContributionType}
+                />
               </div>
             </div>
           )}
