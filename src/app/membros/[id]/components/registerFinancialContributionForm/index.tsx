@@ -34,6 +34,7 @@ const RegisterFinancialContributionForm = (
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm<RegisterFinancialContributionData>({
     resolver: zodResolver(schema),
   });
@@ -73,6 +74,7 @@ const RegisterFinancialContributionForm = (
     if (response.ok) {
       handleLastContribution(body.value);
       handleLastFinancialContributionType(body.type);
+      reset();
 
       toast.success("Contribuição financeira inserida!", {
         duration: 2000,
