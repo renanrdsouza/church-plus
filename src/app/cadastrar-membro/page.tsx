@@ -54,12 +54,12 @@ const schema = z
       ),
     education: z.enum(
       [
-        "fundamental-incompleto",
-        "fundamental-completo",
-        "medio-incompleto",
-        "medio-completo",
-        "superior-incompleto",
-        "superior-completo",
+        "fundamentalIncompleto",
+        "fundamentalCompleto",
+        "medioIncompleto",
+        "medioCompleto",
+        "superiorIncompleto",
+        "superiorCompleto",
         "outro",
       ],
       {
@@ -134,7 +134,7 @@ const RegisterMember = () => {
       phone_list: phones,
       address_list: [
         {
-          zip_code: data.cpf,
+          zip_code: data.cep,
           number: parseInt(data.number),
           street: data.street,
           neighborhood: data.neighborhood,
@@ -156,7 +156,7 @@ const RegisterMember = () => {
 
       if (response.ok) {
         toast.success("Membro cadastrado com sucesso!", {
-          duration: 4000,
+          duration: 2000,
         });
         setTimeout(() => {
           router.push("/membros");
@@ -377,28 +377,28 @@ const RegisterMember = () => {
                       id="education"
                       {...register("education")}
                       autoComplete="education-name"
-                      defaultValue="choose-one"
+                      defaultValue="chooseOne"
                       className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
                     >
-                      <option value="choose-one" disabled>
+                      <option value="chooseOne" disabled>
                         Escolha uma opção
                       </option>
-                      <option value="fundamental-incompleto">
+                      <option value="fundamentalIncompleto">
                         Fundamental incompleto
                       </option>
-                      <option value="fundamental-completo">
+                      <option value="fundamentalCompleto">
                         Fundamental completo
                       </option>
-                      <option value="medio-incompleto">
+                      <option value="medioIncompleto">
                         Ensino médio incompleto
                       </option>
-                      <option value="medio-completo">
+                      <option value="medioCompleto">
                         Ensino médio completo
                       </option>
-                      <option value="superior-incompleto">
+                      <option value="superiorIncompleto">
                         Ensino superior incompleto
                       </option>
-                      <option value="superior-completo">
+                      <option value="superiorCompleto">
                         Ensino superior completo
                       </option>
                       <option value="outro">Outro...</option>

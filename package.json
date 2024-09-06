@@ -17,9 +17,13 @@
     "wait-for-postgres": "node ./src/infrastructure/scripts/wait-for-postgres.js"
   },
   "dependencies": {
+    "@emotion/react": "^11.13.3",
+    "@emotion/styled": "^11.13.0",
     "@headlessui/react": "^2.1.2",
     "@heroicons/react": "^2.1.5",
     "@hookform/resolvers": "^3.9.0",
+    "@mui/material": "^6.0.1",
+    "@mui/x-charts": "^7.15.0",
     "@prisma/client": "^5.13.0",
     "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
