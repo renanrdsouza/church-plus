@@ -41,13 +41,15 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
   };
 
   const handleLastContribution = (contributions: any) => {
-    const lastContribution = (
-      contributions[contributions.length - 1].value / 100
-    )
-      .toFixed(2)
-      .replace(".", ",");
-
-    setLastContribution(lastContribution);
+    if (contributions.length > 0) {
+      const lastContribution =
+        (contributions[contributions.length - 1].value / 100)
+          .toFixed(2)
+          .replace(".", ",") || "--,--";
+      setLastContribution(lastContribution);
+    } else {
+      setLastContribution("--,--");
+    }
   };
 
   const handleLastFinancialContributionType = (contributions: any) => {
@@ -58,9 +60,13 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
       Other: "Outro",
     };
 
-    if (contributions) {
+    if (contributions.length > 0) {
       const lastContributionType = contributions[contributions.length - 1].type;
-      setLastFinancialContributionType(translatedTypes[lastContributionType]);
+      setLastFinancialContributionType(
+        translatedTypes[lastContributionType] || "N/A",
+      );
+    } else {
+      setLastFinancialContributionType("N/A");
     }
   };
 
@@ -77,7 +83,6 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
         handleLastFinancialContributionType(
           data.member.financial_contributions,
         );
-        console.log(data.member.financial_contributions);
       } catch (error) {
         console.error("Erro ao buscar dados do membro:", error);
       } finally {
