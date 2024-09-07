@@ -39,12 +39,19 @@ export default function Example() {
           </div>
           <div className="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
             <div className="flex flex-shrink-0 items-center">
-              <Link href="/">
-                <img
+              <Link
+                href="/"
+                className="italic font-bold text-slate-600 text-xl"
+              >
+                {/* <img
                   alt="Your Company"
                   src="./logo_transparent.png"
                   className="object-cover h-24 hover:scale-110 transition-all duration-300"
-                />
+                /> */}
+                <div className="hover:scale-110 transition-all duration-300 leading-5">
+                  <p>Church</p>
+                  <p>Plus+</p>
+                </div>
               </Link>
             </div>
             <div className="hidden sm:ml-6 sm:flex">

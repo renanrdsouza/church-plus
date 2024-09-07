@@ -97,16 +97,14 @@ const Membros = () => {
               </div>
               <div className="flex gap-x-1 sm:gap-x-3 max-w-56 shrink-0 sm:flex items-center sm:items-end">
                 <Link
-                  href="#"
+                  href={`/membros/${member.id}`}
                   className="p-2 sm:p-3 h-11 bg-slate-500 rounded-md text-white text-base hover:bg-slate-300 hover:text-slate-600 transition-all duration-300"
                 >
-                  Editar
+                  Detalhes
                 </Link>
                 <button
                   onClick={() => {
-                    setIsOpen(true),
-                      setItemToDelete(member.id),
-                      console.log(itemToDelete);
+                    setIsOpen(true), setItemToDelete(member.id);
                   }}
                   className="bg-red-400 h-11 p-2 sm:p-3 text-center rounded-md hover:bg-red-600 hover:text-white transition-all duration-300"
                 >
