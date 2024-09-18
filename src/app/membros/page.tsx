@@ -86,7 +86,7 @@ const Membros = () => {
           {members.map((member) => (
             <li
               key={member.id}
-              className="flex items-center justify-center sm:justify-between gap-x-14 gap-y-4 py-2 sm:p-5 flex-wrap sm:flex-nowrap border-2 shadow-sm"
+              className="flex items-center justify-center sm:justify-between gap-x-14 gap-y-4 py-2 sm:p-5 flex-wrap sm:flex-nowrap border-2 shadow-sm mb-3"
             >
               <div>
                 <div className="flex flex-col justify-center min-w-0 flex-auto sm:justify-between">
