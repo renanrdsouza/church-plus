@@ -82,7 +82,7 @@ const Membros = () => {
           Cadastrar novo membro
         </Link>
 
-        <ul role="list" className="divide-y divide-gray-300">
+        <ul role="list">
           {members.map((member) => (
             <li
               key={member.id}
