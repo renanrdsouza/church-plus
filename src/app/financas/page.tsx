@@ -146,14 +146,14 @@ const Financas = () => {
                 financialContributions.map((contribution) => (
                   <li
                     key={contribution.id}
-                    className="flex justify-between mt-4 shadow-xl py-5 px-10 flex-wrap"
+                    className="flex justify-between mt-4 gap-4 shadow-xl py-5 px-10 flex-wrap"
                   >
                     <div className="flex min-w-0 gap-x-4">
                       <div className="min-w-0 flex-auto">
                         <p className="text-sm font-semibold leading-6 text-gray-900">
                           Valor: R${formatCurrency(contribution.value)}
                         </p>
-                        <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                        <p className="hidden md:block mt-1 truncate text-xs leading-5 text-gray-500">
                           Data de cadastro:{" "}
                           {new Date(contribution.updated_at).toLocaleDateString(
                             "pt-BR",
@@ -161,7 +161,7 @@ const Financas = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-x-4">
+                    <div className="flex items-center gap-x-4 w-full md:w-44 justify-between md:justify-normal">
                       <div className="shrink-0 sm:flex sm:flex-col sm:items-end mt-1">
                         <p className="text-sm leading-6 text-gray-900">
                           Tipo: {formatContributionType(contribution.type)}
