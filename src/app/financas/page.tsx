@@ -144,30 +144,36 @@ const Financas = () => {
             <ul role="list" className="divide-y divide-gray-100">
               {financialContributions.length > 0 ? (
                 financialContributions.map((contribution) => (
-                  <li key={contribution.id}>
-                    <Link
-                      href={`/${contribution.id}`}
-                      className="flex justify-between mt-4 shadow-xl py-5 px-10 flex-wrap"
-                    >
-                      <div className="flex min-w-0 gap-x-4">
-                        <div className="min-w-0 flex-auto">
-                          <p className="text-sm font-semibold leading-6 text-gray-900">
-                            Valor: R${formatCurrency(contribution.value)}
-                          </p>
-                          <p className="mt-1 truncate text-xs leading-5 text-gray-500">
-                            Data de cadastro:{" "}
-                            {new Date(
-                              contribution.updated_at,
-                            ).toLocaleDateString("pt-BR")}
-                          </p>
-                        </div>
+                  <li
+                    key={contribution.id}
+                    className="flex justify-between mt-4 shadow-xl py-5 px-10 flex-wrap"
+                  >
+                    <div className="flex min-w-0 gap-x-4">
+                      <div className="min-w-0 flex-auto">
+                        <p className="text-sm font-semibold leading-6 text-gray-900">
+                          Valor: R${formatCurrency(contribution.value)}
+                        </p>
+                        <p className="mt-1 truncate text-xs leading-5 text-gray-500">
+                          Data de cadastro:{" "}
+                          {new Date(contribution.updated_at).toLocaleDateString(
+                            "pt-BR",
+                          )}
+                        </p>
                       </div>
+                    </div>
+                    <div className="flex items-center gap-x-4">
                       <div className="shrink-0 sm:flex sm:flex-col sm:items-end mt-1">
                         <p className="text-sm leading-6 text-gray-900">
                           Tipo: {formatContributionType(contribution.type)}
                         </p>
                       </div>
-                    </Link>
+                      <Link
+                        href={`/financas/${contribution.id}`}
+                        className="p-2 sm:p-3 h-11 bg-slate-500 rounded-md text-white text-base hover:bg-slate-300 hover:text-slate-600 transition-all duration-300"
+                      >
+                        Detalhes
+                      </Link>
+                    </div>
                   </li>
                 ))
               ) : (
