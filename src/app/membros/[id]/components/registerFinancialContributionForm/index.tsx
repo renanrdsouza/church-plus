@@ -59,7 +59,7 @@ const RegisterFinancialContributionForm = (
   const onSubmit = async (data: RegisterFinancialContributionData) => {
     const body = {
       member_id: memberId,
-      value: +data.value * 100,
+      value: parseInt(data.value.replace(",", "")),
       type: data.contributionType,
     };
 
@@ -93,7 +93,7 @@ const RegisterFinancialContributionForm = (
           <label className="text-base">
             Valor:
             <input
-              type="number"
+              type="text"
               placeholder="0,00"
               {...register("value")}
               className="p-2 outline-none border-gray-300 rounded-md w-full mt-3"
@@ -106,7 +106,7 @@ const RegisterFinancialContributionForm = (
           </label>
         </div>
         <div className="flex flex-col justify-between">
-          <label className="text-base">Tipo de contribuição:</label>
+          <label className="text-base mb-3">Tipo de contribuição:</label>
           <select
             id="contributionType"
             defaultValue="chooseOne"

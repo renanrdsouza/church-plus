@@ -102,7 +102,7 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
   return (
     <Container>
       <main className="h-screen">
-        <div className="mt-7 p-4 rounded-md border-2 shadow-xl">
+        <div className="m-3 sm:mt-7 p-4 rounded-md border-2 shadow-xl">
           <div className="flex justify-between items-center px-4 sm:px-0">
             <h3 className="font-bold text-2xl leading-7 text-gray-900">
               Detalhes do membro
@@ -236,7 +236,7 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
           )}
         </div>
 
-        <div className="my-7 p-4 rounded-md border-2 shadow-xl">
+        <div className="m-3 sm:mt-7 p-4 rounded-md border-2 shadow-xl">
           <div className="flex justify-between items-center px-4 sm:px-0">
             <h3 className="font-bold text-2xl leading-7 text-gray-900">
               Detalhes financeiros

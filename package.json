@@ -25,6 +25,7 @@
     "@mui/material": "^6.0.1",
     "@mui/x-charts": "^7.15.0",
     "@prisma/client": "^5.13.0",
+    "date-fns": "^3.6.0",
     "dotenv": "^16.4.5",
     "dotenv-expand": "^11.0.6",
     "heroicons": "^2.1.5",

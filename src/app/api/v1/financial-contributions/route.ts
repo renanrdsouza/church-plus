@@ -26,14 +26,17 @@ export async function POST(request: Request) {
 
 export async function GET(request: Request) {
   const params = new URL(request.url).searchParams;
-  const year = params.get("year");
-  const month = params.get("month");
+  const fromDate = params.get("fromDate");
+  const toDate = params.get("toDate");
 
-  if (!year || !month)
+  if (!fromDate || !toDate)
     return NextResponse.json({ error: "Missing parameter" }, { status: 400 });
 
   try {
-    const contributions = await getContributionsByMonthAndYear(year, month);
+    const contributions = await getContributionsByMonthAndYear(
+      fromDate,
+      toDate,
+    );
 
     return NextResponse.json({ contributions }, { status: 200 });
   } catch (err: any) {

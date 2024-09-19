@@ -61,14 +61,14 @@ export async function updateFinancialContribution(
 }
 
 export async function getContributionsByMonthAndYear(
-  year: string,
-  month: string,
+  fromDate: string,
+  toDate: string,
 ) {
   const contributions = await prisma.financialContribuition.findMany({
     where: {
       created_at: {
-        gte: new Date(`${year}-${month}-01`),
-        lte: new Date(`${year}-${month}-31`),
+        gte: new Date(`${fromDate}`),
+        lte: new Date(`${toDate}`),
       },
     },
   });

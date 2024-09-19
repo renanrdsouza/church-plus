@@ -44,7 +44,7 @@ const Membros = () => {
   return (
     <Container>
       <main className="flex flex-col p-3 h-screen">
-        <div className="flex gap-x-3 mt-4">
+        <div className="flex gap-x-3 mt-4 flex-col gap-y-3 sm:flex-row">
           <div className="relative flex-1">
             <div className="absolute inset-y-0 start-0 flex items-center ps-3 pointer-events-none">
               <svg
@@ -82,15 +82,18 @@ const Membros = () => {
           Cadastrar novo membro
         </Link>
 
-        <ul role="list" className="divide-y px-10 divide-gray-300">
+        <ul role="list">
           {members.map((member) => (
-            <li key={member.id} className="flex justify-between gap-x-30 py-5">
-              <div className="flex min-w-0 gap-x-4">
-                <div className="flex flex-col justify-center min-w-0 flex-auto">
-                  <p className="text-sm font-semibold leading-6 text-gray-900">
+            <li
+              key={member.id}
+              className="flex flex-col md:flex-row items-center justify-center sm:justify-between gap-x-14 gap-y-4 py-2 sm:p-5 flex-wrap sm:flex-nowrap border-2 shadow-sm mb-3"
+            >
+              <div>
+                <div className="flex flex-col justify-center min-w-0 flex-auto sm:justify-between">
+                  <p className="text-sm text-center md:text-left font-semibold leading-6 text-gray-900">
                     {member.name}
                   </p>
-                  <p className="hidden sm:block mt-1 truncate text-xs leading-5 text-gray-500">
+                  <p className="hidden sm:block text-center lg:text-left mt-1 truncate text-xs leading-5 text-gray-500">
                     {member.email}
                   </p>
                 </div>
