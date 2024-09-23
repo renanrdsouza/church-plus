@@ -32,7 +32,9 @@ describe("GET function tests", () => {
     (getContributionsByMonthAndYear as jest.Mock).mockResolvedValue([
       { id: 1, amount: 100 },
     ]);
-    const request = new Request("http://localhost?year=2023&month=04");
+    const request = new Request(
+      "http://localhost/3000?fromDate=2023&toDate=04",
+    );
     await GET(request);
     expect(NextResponse.json).toHaveBeenCalledWith(
       { contributions: [{ id: 1, amount: 100 }] },
@@ -44,7 +46,7 @@ describe("GET function tests", () => {
     (getContributionsByMonthAndYear as jest.Mock).mockRejectedValue(
       new Error("Test error"),
     );
-    const request = new Request("http://localhost?year=2023&month=04");
+    const request = new Request("http://localhost?fromDate=2023&toDate=04");
     await GET(request);
     expect(NextResponse.json).toHaveBeenCalledWith(
       { error: "Internal Server Error" },
