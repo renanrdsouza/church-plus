@@ -136,16 +136,16 @@ describe("getContributionsByMonthAndYear", () => {
       mockContributions,
     );
 
-    const year = "2023";
-    const month = "04";
+    const year = "2023-04-01T00:00:00.000Z";
+    const month = "2023-04-30T23:59:59.999Z";
     const contributions = await getContributionsByMonthAndYear(year, month);
 
     expect(contributions).toEqual(mockContributions);
     expect(prisma.financialContribuition.findMany).toHaveBeenCalledWith({
       where: {
         created_at: {
-          gte: new Date("2023-04-01"),
-          lte: new Date("2023-04-31"),
+          gte: new Date("2023-04-01T00:00:00.000Z"),
+          lte: new Date("2023-04-30T23:59:59.999Z"),
         },
       },
     });
@@ -154,16 +154,16 @@ describe("getContributionsByMonthAndYear", () => {
   it("should handle empty results", async () => {
     (prisma.financialContribuition.findMany as jest.Mock).mockResolvedValue([]);
 
-    const year = "2023";
-    const month = "05";
+    const year = "2023-05-01T00:00:00.000Z";
+    const month = "2023-05-31T23:59:59.999Z";
     const contributions = await getContributionsByMonthAndYear(year, month);
 
     expect(contributions).toEqual([]);
     expect(prisma.financialContribuition.findMany).toHaveBeenCalledWith({
       where: {
         created_at: {
-          gte: new Date("2023-05-01"),
-          lte: new Date("2023-05-31"),
+          gte: new Date("2023-05-01T00:00:00.000Z"),
+          lte: new Date("2023-05-31T23:59:59.999Z"),
         },
       },
     });

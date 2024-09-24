@@ -87,3 +87,17 @@ export async function deleteFinancialContribution(id: string) {
     where: { id },
   });
 }
+
+export async function getFinancialContributionById(id: string) {
+  if (
+    !id.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)
+  ) {
+    throw new Error("Malformed financial contribution id");
+  }
+
+  const contribution = await prisma.financialContribuition.findUnique({
+    where: { id },
+  });
+
+  return contribution;
+}
