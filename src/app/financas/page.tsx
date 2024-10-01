@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import Container from "../components/container";
 import BarsDataset from "./components/barGraphic";
 import { subMonths } from "date-fns";
+import ContributionsTable from "./components/contributionsTable";
 import Link from "next/link";
 
 interface FinancialContribution {
@@ -26,17 +27,6 @@ const Financas = () => {
 
   const formatCurrency = (value: number) =>
     (value / 100).toFixed(2).replace(".", ",");
-
-  const formatContributionType = (type: string) => {
-    const formattedTypes: { [key: string]: string } = {
-      Offering: "Oferta",
-      Tithe: "Dízimo",
-      Donation: "Doação",
-      Other: "Outro",
-    };
-
-    return formattedTypes[type] ? formattedTypes[type] : "Nenhum tipo";
-  };
 
   const getTotalValue = (contributions: FinancialContribution[]) => {
     const value = contributions
@@ -108,7 +98,15 @@ const Financas = () => {
     <Container>
       <main className="h-screen">
         <div className="mt-7 p-4 rounded-md border-2 shadow-xl">
-          <h1 className="text-2xl font-bold">Finanças</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl font-bold">Finanças</h1>
+            <Link
+              href="/financas/cadastrar-financa"
+              className="bg-slate-500 rounded-md p-2 text-white hover:bg-slate-300 hover:text-black transition-colors duration-300"
+            >
+              Nova Contribuição
+            </Link>
+          </div>
           <h2 className="mt-5 font-semibold">Últimos 30 dias</h2>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
             <div className="p-6 rounded-md border-2 shadow-sm">
@@ -140,47 +138,8 @@ const Financas = () => {
               <BarsDataset contributions={financialContributions} />
             </div>
           </div>
-          <div className="mt-10">
-            <ul role="list" className="divide-y divide-gray-100">
-              {financialContributions.length > 0 ? (
-                financialContributions.map((contribution) => (
-                  <li
-                    key={contribution.id}
-                    className="flex justify-between mt-4 gap-4 shadow-xl py-5 px-10 flex-wrap"
-                  >
-                    <div className="flex min-w-0 gap-x-4">
-                      <div className="min-w-0 flex-auto">
-                        <p className="text-sm font-semibold leading-6 text-gray-900">
-                          Valor: R${formatCurrency(contribution.value)}
-                        </p>
-                        <p className="hidden md:block mt-1 truncate text-xs leading-5 text-gray-500">
-                          Data de cadastro:{" "}
-                          {new Date(contribution.updated_at).toLocaleDateString(
-                            "pt-BR",
-                          )}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-x-4 w-full md:w-44 justify-between md:justify-normal">
-                      <div className="shrink-0 sm:flex sm:flex-col sm:items-end mt-1">
-                        <p className="text-sm leading-6 text-gray-900">
-                          Tipo: {formatContributionType(contribution.type)}
-                        </p>
-                      </div>
-                      <Link
-                        href={`/financas/${contribution.id}`}
-                        className="p-2 sm:p-3 h-11 bg-slate-500 rounded-md text-white text-base hover:bg-slate-300 hover:text-slate-600 transition-all duration-300"
-                      >
-                        Detalhes
-                      </Link>
-                    </div>
-                  </li>
-                ))
-              ) : (
-                <div>Nenhum dado a ser exibido...</div>
-              )}
-            </ul>
-          </div>
+          <h2 className="mt-10 font-semibold">Todas as contribuições</h2>
+          <ContributionsTable contributions={financialContributions} />
         </div>
       </main>
     </Container>

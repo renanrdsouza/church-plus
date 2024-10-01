@@ -43,11 +43,6 @@ export default function Example() {
                 href="/"
                 className="italic font-bold text-slate-600 text-xl"
               >
-                {/* <img
-                  alt="Your Company"
-                  src="./logo_transparent.png"
-                  className="object-cover h-24 hover:scale-110 transition-all duration-300"
-                /> */}
                 <div className="hover:scale-110 transition-all duration-300 leading-5">
                   <p>Church</p>
                   <p>Plus+</p>
@@ -61,7 +56,7 @@ export default function Example() {
                   href="/membros"
                   className={`link ${pathname === "/membros" ? "text-slate-700 border-b-4 border-slate-500 px-3 py-2 text-lg font-medium" : "text-slate-500 border-b-4 border-transparent hover:border-slate-500 px-3 py-2 transition-all duration-300 text-lg font-medium"}`}
                 >
-                  Membresia
+                  Membros
                 </Link>
                 <Link
                   key="Financeiro"
