@@ -1,4 +1,4 @@
-import { GET } from "@/app/api/v1/financial-contributions/contribution-owner/[contributionId]/route";
+import { GET } from "@/app/api/v1/financial-contributions/contribution/[contributionId]/route";
 import { getFinancialContributionById } from "@/models/financialContribution";
 
 // Mock the getFinancialContributionById function
