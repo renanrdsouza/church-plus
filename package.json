@@ -8,7 +8,7 @@
     "services:down": "docker compose -f ./docker-compose.yml down",
     "services:stop": "docker compose -f ./docker-compose.yml stop",
     "migration:dev": "prisma migrate dev --preview-feature",
-    "build": "prisma generate && prisma migrate deploy && next build",
+    "build": "npx prisma migrate resolve --rolled-back '20241004143539_create_table_account_user_session_and_verification_token' && prisma generate && prisma migrate deploy && next build",
     "start": "next start",
     "lint": "next lint",
     "test:watch": "npx jest --watchAll --runInBand",
@@ -17,6 +17,7 @@
     "wait-for-postgres": "node ./src/infrastructure/scripts/wait-for-postgres.js"
   },
   "dependencies": {
+    "@auth/prisma-adapter": "^2.5.3",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
     "@headlessui/react": "^2.1.2",
@@ -31,6 +32,7 @@
     "heroicons": "^2.1.5",
     "lodash": "^4.17.21",
     "next": "14.2.3",
+    "next-auth": "^4.24.8",
     "react": "^18",
     "react-dom": "^18",
     "react-hook-form": "^7.52.2",
