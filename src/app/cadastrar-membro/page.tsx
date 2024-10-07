@@ -6,6 +6,8 @@ import { Controller, useForm } from "react-hook-form";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 const phoneSchema = z
   .string()
@@ -100,6 +102,12 @@ const schema = z
 type CreateUserFormData = z.infer<typeof schema>;
 
 const RegisterMember = () => {
+  const { data, status } = useSession();
+
+  if (status === "unauthenticated" || !data?.user) {
+    redirect("/");
+  }
+
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const router = useRouter();
 
@@ -176,261 +184,435 @@ const RegisterMember = () => {
 
   return (
     <Container>
-      <main className="bg-white p-10 rounded-xl my-5 shadow-xl">
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="space-y-12">
-            <div className="border-b border-gray-900/10 pb-12">
-              <h2 className="text-base font-semibold leading-7 text-gray-900">
-                Informações pessoais
-              </h2>
+      {status === "authenticated" && (
+        <main className="bg-white p-10 rounded-xl my-5 shadow-xl">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="space-y-12">
+              <div className="border-b border-gray-900/10 pb-12">
+                <h2 className="text-base font-semibold leading-7 text-gray-900">
+                  Informações pessoais
+                </h2>
 
-              <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="fullname"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Nome Completo
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="fullname"
-                      {...register("fullname")}
-                      type="text"
-                      autoComplete="given-name"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.fullname && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.fullname.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="email"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Email
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="email"
-                      {...register("email")}
-                      type="email"
-                      autoComplete="email"
-                      placeholder="email@email.com"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.email && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.email.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="cpf"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    CPF
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="cpf"
-                      {...register("cpf")}
-                      type="text"
-                      autoComplete="given-cpf"
-                      placeholder="xxx.xxx.xxx-xx"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.cpf && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.cpf.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2 sm:col-start-1">
-                  <label
-                    htmlFor="birthdate"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Data de Nascimento
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="birthdate"
-                      {...register("birthdate")}
-                      type="date"
-                      autoComplete="birthdate"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.birthdate && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.birthdate.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2 sm:col-start-1">
-                  <label
-                    htmlFor="baptismdate"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Data de Batismo
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="baptismdate"
-                      {...register("baptismdate")}
-                      type="date"
-                      autoComplete="baptismdate"
-                      disabled={rememberBaptismDate}
-                      className={`${rememberBaptismDate ? "block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 opacity-50" : "block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}`}
-                    />
-                    {errors.baptismdate && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.baptismdate.message}
-                      </p>
-                    )}
-                  </div>
-
-                  <div className="flex mt-2 sm:col-span-4">
-                    <div className="mr-2">
-                      <input
-                        type="checkbox"
-                        id="remember"
-                        {...register("rememberBaptismDate")}
-                      />
-                    </div>
+                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <div className="sm:col-span-3">
                     <label
-                      htmlFor="remember"
+                      htmlFor="fullname"
                       className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      Não me lembro
+                      Nome Completo
                     </label>
+                    <div className="mt-2">
+                      <input
+                        id="fullname"
+                        {...register("fullname")}
+                        type="text"
+                        autoComplete="given-name"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.fullname && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.fullname.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
 
-                <div className="sm:col-span-3 sm:col-start-1">
-                  <label
-                    htmlFor="fathername"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Nome do Pai
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="fathername"
-                      {...register("fathername")}
-                      type="text"
-                      autoComplete="given-name"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.fathername && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.fathername.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="mothername"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Nome da Mãe
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="mothername"
-                      {...register("mothername")}
-                      type="text"
-                      autoComplete="given-name"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.mothername && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.mothername.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="education"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Educação
-                  </label>
-                  <div className="mt-2">
-                    <select
-                      id="education"
-                      {...register("education")}
-                      autoComplete="education-name"
-                      defaultValue="chooseOne"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="email"
+                      className="block text-sm font-medium leading-6 text-gray-900"
                     >
-                      <option value="chooseOne" disabled>
-                        Escolha uma opção
-                      </option>
-                      <option value="fundamentalIncompleto">
-                        Fundamental incompleto
-                      </option>
-                      <option value="fundamentalCompleto">
-                        Fundamental completo
-                      </option>
-                      <option value="medioIncompleto">
-                        Ensino médio incompleto
-                      </option>
-                      <option value="medioCompleto">
-                        Ensino médio completo
-                      </option>
-                      <option value="superiorIncompleto">
-                        Ensino superior incompleto
-                      </option>
-                      <option value="superiorCompleto">
-                        Ensino superior completo
-                      </option>
-                      <option value="outro">Outro...</option>
-                    </select>
-                    {errors.education && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.education.message}
-                      </p>
-                    )}
+                      Email
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="email"
+                        {...register("email")}
+                        type="email"
+                        autoComplete="email"
+                        placeholder="email@email.com"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.email && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.email.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="cpf"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      CPF
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="cpf"
+                        {...register("cpf")}
+                        type="text"
+                        autoComplete="given-cpf"
+                        placeholder="xxx.xxx.xxx-xx"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.cpf && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.cpf.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2 sm:col-start-1">
+                    <label
+                      htmlFor="birthdate"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Data de Nascimento
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="birthdate"
+                        {...register("birthdate")}
+                        type="date"
+                        autoComplete="birthdate"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.birthdate && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.birthdate.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2 sm:col-start-1">
+                    <label
+                      htmlFor="baptismdate"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Data de Batismo
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="baptismdate"
+                        {...register("baptismdate")}
+                        type="date"
+                        autoComplete="baptismdate"
+                        disabled={rememberBaptismDate}
+                        className={`${rememberBaptismDate ? "block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6 opacity-50" : "block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"}`}
+                      />
+                      {errors.baptismdate && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.baptismdate.message}
+                        </p>
+                      )}
+                    </div>
+
+                    <div className="flex mt-2 sm:col-span-4">
+                      <div className="mr-2">
+                        <input
+                          type="checkbox"
+                          id="remember"
+                          {...register("rememberBaptismDate")}
+                        />
+                      </div>
+                      <label
+                        htmlFor="remember"
+                        className="block text-sm font-medium leading-6 text-gray-900"
+                      >
+                        Não me lembro
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-3 sm:col-start-1">
+                    <label
+                      htmlFor="fathername"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Nome do Pai
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="fathername"
+                        {...register("fathername")}
+                        type="text"
+                        autoComplete="given-name"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.fathername && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.fathername.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="mothername"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Nome da Mãe
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="mothername"
+                        {...register("mothername")}
+                        type="text"
+                        autoComplete="given-name"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.mothername && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.mothername.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="education"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Educação
+                    </label>
+                    <div className="mt-2">
+                      <select
+                        id="education"
+                        {...register("education")}
+                        autoComplete="education-name"
+                        defaultValue="chooseOne"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:max-w-xs sm:text-sm sm:leading-6"
+                      >
+                        <option value="chooseOne" disabled>
+                          Escolha uma opção
+                        </option>
+                        <option value="fundamentalIncompleto">
+                          Fundamental incompleto
+                        </option>
+                        <option value="fundamentalCompleto">
+                          Fundamental completo
+                        </option>
+                        <option value="medioIncompleto">
+                          Ensino médio incompleto
+                        </option>
+                        <option value="medioCompleto">
+                          Ensino médio completo
+                        </option>
+                        <option value="superiorIncompleto">
+                          Ensino superior incompleto
+                        </option>
+                        <option value="superiorCompleto">
+                          Ensino superior completo
+                        </option>
+                        <option value="outro">Outro...</option>
+                      </select>
+                      {errors.education && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.education.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-3">
+                    <label
+                      htmlFor="profession"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Profissão
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="profession"
+                        {...register("profession")}
+                        type="text"
+                        autoComplete="profession"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.profession && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.profession.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
+              </div>
 
-                <div className="sm:col-span-3">
-                  <label
-                    htmlFor="profession"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Profissão
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="profession"
-                      {...register("profession")}
-                      type="text"
-                      autoComplete="profession"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.profession && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.profession.message}
-                      </p>
-                    )}
+              <div className="border-b border-gray-900/10 pb-12 mt-2">
+                <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
+                  <h2 className="text-base font-semibold leading-7 text-gray-900 sm:col-span-full">
+                    Informações de endereço
+                  </h2>
+
+                  <div className="col-span-full">
+                    <label
+                      htmlFor="street"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Logradouro
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="street"
+                        {...register("street")}
+                        type="text"
+                        autoComplete="street"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.street && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.street.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2 sm:col-start-1">
+                    <label
+                      htmlFor="city"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Cidade
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="city"
+                        {...register("city")}
+                        type="text"
+                        autoComplete="address-level2"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.city && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.city.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="uf"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Estado
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="uf"
+                        {...register("uf")}
+                        type="text"
+                        autoComplete="address-level1"
+                        maxLength={2}
+                        placeholder="ex: RJ"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.uf && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.uf.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="cep"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      CEP
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="cep"
+                        {...register("cep")}
+                        type="text"
+                        autoComplete="cep"
+                        placeholder="00000-000"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.cep && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.cep.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="number"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Número
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="number"
+                        {...register("number")}
+                        type="text"
+                        autoComplete="number"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.number && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.number.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="neighborhood"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Bairro
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="neighborhood"
+                        {...register("neighborhood")}
+                        type="text"
+                        autoComplete="neighborhood"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.neighborhood && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.neighborhood.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="complement"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Complemento
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="complement"
+                        {...register("complement")}
+                        type="text"
+                        autoComplete="complement"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                      />
+                      {errors.complement && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.complement.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -439,234 +621,62 @@ const RegisterMember = () => {
             <div className="border-b border-gray-900/10 pb-12 mt-2">
               <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
                 <h2 className="text-base font-semibold leading-7 text-gray-900 sm:col-span-full">
-                  Informações de endereço
+                  Telefone(s)
                 </h2>
-
-                <div className="col-span-full">
-                  <label
-                    htmlFor="street"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Logradouro
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="street"
-                      {...register("street")}
-                      type="text"
-                      autoComplete="street"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.street && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.street.message}
-                      </p>
-                    )}
+                {["phone1", "phone2", "phone3"].map((phone, index) => (
+                  <div key={phone} className="sm:col-span-2 sm:col-start-1">
+                    <label
+                      htmlFor={phone}
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      Telefone {index + 1}
+                    </label>
+                    <div className="mt-2">
+                      <Controller
+                        name={`phones.${index}`}
+                        control={control}
+                        defaultValue=""
+                        render={({ field }) => (
+                          <input
+                            {...field}
+                            id={phone}
+                            type="text"
+                            autoComplete={phone}
+                            placeholder="(xx) xxxxx-xxxx"
+                            className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                          />
+                        )}
+                      />
+                      {errors.phones && errors.phones[index] && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.phones[index]?.message}
+                        </p>
+                      )}
+                    </div>
                   </div>
-                </div>
-
-                <div className="sm:col-span-2 sm:col-start-1">
-                  <label
-                    htmlFor="city"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Cidade
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="city"
-                      {...register("city")}
-                      type="text"
-                      autoComplete="address-level2"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.city && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.city.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="uf"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Estado
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="uf"
-                      {...register("uf")}
-                      type="text"
-                      autoComplete="address-level1"
-                      maxLength={2}
-                      placeholder="ex: RJ"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.uf && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.uf.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="cep"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    CEP
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="cep"
-                      {...register("cep")}
-                      type="text"
-                      autoComplete="cep"
-                      placeholder="00000-000"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.cep && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.cep.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="number"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Número
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="number"
-                      {...register("number")}
-                      type="text"
-                      autoComplete="number"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.number && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.number.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="neighborhood"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Bairro
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="neighborhood"
-                      {...register("neighborhood")}
-                      type="text"
-                      autoComplete="neighborhood"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.neighborhood && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.neighborhood.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <div className="sm:col-span-2">
-                  <label
-                    htmlFor="complement"
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Complemento
-                  </label>
-                  <div className="mt-2">
-                    <input
-                      id="complement"
-                      {...register("complement")}
-                      type="text"
-                      autoComplete="complement"
-                      className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                    />
-                    {errors.complement && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.complement.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
+                ))}
               </div>
             </div>
-          </div>
 
-          <div className="border-b border-gray-900/10 pb-12 mt-2">
-            <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
-              <h2 className="text-base font-semibold leading-7 text-gray-900 sm:col-span-full">
-                Telefone(s)
-              </h2>
-              {["phone1", "phone2", "phone3"].map((phone, index) => (
-                <div key={phone} className="sm:col-span-2 sm:col-start-1">
-                  <label
-                    htmlFor={phone}
-                    className="block text-sm font-medium leading-6 text-gray-900"
-                  >
-                    Telefone {index + 1}
-                  </label>
-                  <div className="mt-2">
-                    <Controller
-                      name={`phones.${index}`}
-                      control={control}
-                      defaultValue=""
-                      render={({ field }) => (
-                        <input
-                          {...field}
-                          id={phone}
-                          type="text"
-                          autoComplete={phone}
-                          placeholder="(xx) xxxxx-xxxx"
-                          className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                        />
-                      )}
-                    />
-                    {errors.phones && errors.phones[index] && (
-                      <p className="text-red-500 text-sm mt-2">
-                        {errors.phones[index]?.message}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              ))}
+            <div className="mt-6 flex items-center justify-end gap-x-6">
+              <Link
+                href="/membros"
+                type="button"
+                className="text-sm px-3 py-2 rounded-md font-semibold leading-6 text-gray-900 bg-slate-200 hover:bg-slate-300 transition-all duration-200"
+              >
+                Cancelar
+              </Link>
+              <button
+                type="submit"
+                className="rounded-md bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200"
+              >
+                Cadastrar
+              </button>
+              <Toaster />
             </div>
-          </div>
-
-          <div className="mt-6 flex items-center justify-end gap-x-6">
-            <Link
-              href="/membros"
-              type="button"
-              className="text-sm px-3 py-2 rounded-md font-semibold leading-6 text-gray-900 bg-slate-200 hover:bg-slate-300 transition-all duration-200"
-            >
-              Cancelar
-            </Link>
-            <button
-              type="submit"
-              className="rounded-md bg-slate-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 transition-all duration-200"
-            >
-              Cadastrar
-            </button>
-            <Toaster />
-          </div>
-        </form>
-      </main>
+          </form>
+        </main>
+      )}
     </Container>
   );
 };

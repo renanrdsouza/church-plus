@@ -8,6 +8,7 @@ import { typeToEnum } from "@/utils/typeToEnum";
 
 export async function saveFinancialContribution(
   newFinancialContribution: IFinancialContribuition,
+  userId: string,
 ): Promise<IFinancialContribuition> {
   const financialContributionTypeFormated = typeToEnum(
     newFinancialContribution.type,
@@ -17,7 +18,7 @@ export async function saveFinancialContribution(
 
   const savedFinancialContribution = await prisma.financialContribuition.create(
     {
-      data: newFinancialContribution,
+      data: { ...newFinancialContribution, user_id: userId },
     },
   );
 
@@ -26,10 +27,12 @@ export async function saveFinancialContribution(
 
 export async function getMemberContributions(
   id: string,
+  userId: string,
 ): Promise<IFinancialContribuition[]> {
   const contributions = await prisma.financialContribuition.findMany({
     where: {
       member_id: id,
+      user_id: userId,
     },
   });
 
@@ -39,6 +42,7 @@ export async function getMemberContributions(
 export async function updateFinancialContribution(
   id: string,
   putRequest: IFinancialContributionPutRequest,
+  userId: string,
 ) {
   const financialContributionTypeFormated = typeToEnum(putRequest.type);
 
@@ -50,7 +54,10 @@ export async function updateFinancialContribution(
 
   const updatedFinancialContribution =
     await prisma.financialContribuition.update({
-      where: { id },
+      where: {
+        id,
+        user_id: userId,
+      },
       data: {
         value: putRequest.value,
         type: financialContributionTypeFormated,
@@ -63,6 +70,7 @@ export async function updateFinancialContribution(
 export async function getContributionsByMonthAndYear(
   fromDate: string,
   toDate: string,
+  userId: string,
 ) {
   const contributions = await prisma.financialContribuition.findMany({
     where: {
@@ -70,13 +78,14 @@ export async function getContributionsByMonthAndYear(
         gte: new Date(`${fromDate}`),
         lte: new Date(`${toDate}`),
       },
+      user_id: userId,
     },
   });
 
   return contributions;
 }
 
-export async function deleteFinancialContribution(id: string) {
+export async function deleteFinancialContribution(id: string, userId: string) {
   if (
     !id.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)
   ) {
@@ -84,11 +93,14 @@ export async function deleteFinancialContribution(id: string) {
   }
 
   await prisma.financialContribuition.delete({
-    where: { id },
+    where: {
+      id,
+      user_id: userId,
+    },
   });
 }
 
-export async function getFinancialContributionById(id: string) {
+export async function getFinancialContributionById(id: string, userId: string) {
   if (
     !id.match(/[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}/)
   ) {
@@ -96,7 +108,10 @@ export async function getFinancialContributionById(id: string) {
   }
 
   const contribution = await prisma.financialContribuition.findUnique({
-    where: { id },
+    where: {
+      id,
+      user_id: userId,
+    },
   });
 
   return contribution;

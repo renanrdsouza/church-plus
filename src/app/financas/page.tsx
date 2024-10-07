@@ -5,6 +5,8 @@ import BarsDataset from "./components/barGraphic";
 import { subMonths } from "date-fns";
 import ContributionsTable from "./components/contributionsTable";
 import Link from "next/link";
+import { useSession } from "next-auth/react";
+import { redirect } from "next/navigation";
 
 interface FinancialContribution {
   id: string;
@@ -16,6 +18,12 @@ interface FinancialContribution {
 }
 
 const Financas = () => {
+  const { data, status } = useSession();
+
+  if (status === "unauthenticated" || !data?.user) {
+    redirect("/");
+  }
+
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
   const [financialContributions, setFinancialContributions] = useState<
     FinancialContribution[]
@@ -96,52 +104,54 @@ const Financas = () => {
 
   return (
     <Container>
-      <main className="h-screen">
-        <div className="mt-7 p-4 rounded-md border-2 shadow-xl">
-          <div className="flex justify-between items-center">
-            <h1 className="text-2xl font-bold">Finanças</h1>
-            <Link
-              href="/financas/cadastrar-financa"
-              className="bg-slate-500 rounded-md p-2 text-white hover:bg-slate-300 hover:text-black transition-colors duration-300"
-            >
-              Nova Contribuição
-            </Link>
+      {status === "authenticated" && data?.user && (
+        <main className="h-screen">
+          <div className="mt-7 p-4 rounded-md border-2 shadow-xl">
+            <div className="flex justify-between items-center">
+              <h1 className="text-2xl font-bold">Finanças</h1>
+              <Link
+                href="/financas/cadastrar-financa"
+                className="bg-slate-500 rounded-md p-2 text-white hover:bg-slate-300 hover:text-black transition-colors duration-300"
+              >
+                Nova Contribuição
+              </Link>
+            </div>
+            <h2 className="mt-5 font-semibold">Últimos 30 dias</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
+              <div className="p-6 rounded-md border-2 shadow-sm">
+                <h3 className="text-slate-600">Valor total</h3>
+                <p className="font-semibold text-2xl md:text-3xl">
+                  R${getTotalValue(financialContributions)}
+                </p>
+              </div>
+              <div className="p-6 rounded-md border-2 shadow-sm">
+                <h3 className="text-slate-600">Última contribuição</h3>
+                <p className="font-semibold text-2xl md:text-3xl">
+                  R${lastContribution}
+                </p>
+              </div>
+              <div className="p-6 rounded-md border-2 shadow-sm">
+                <h3 className="text-slate-600">
+                  Tipo de contribuição mais frequente
+                </h3>
+                <p className="font-semibold text-2xl md:text-3xl">
+                  {getMostCommonType(financialContributions)}
+                </p>
+              </div>
+            </div>
+            <div>
+              <h2 className="mt-10 font-semibold">
+                Evolução mensal das contribuições no último ano
+              </h2>
+              <div className="hidden sm:flex w-full h-96 mt-7">
+                <BarsDataset contributions={financialContributions} />
+              </div>
+            </div>
+            <h2 className="mt-10 font-semibold">Todas as contribuições</h2>
+            <ContributionsTable contributions={financialContributions} />
           </div>
-          <h2 className="mt-5 font-semibold">Últimos 30 dias</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-4">
-            <div className="p-6 rounded-md border-2 shadow-sm">
-              <h3 className="text-slate-600">Valor total</h3>
-              <p className="font-semibold text-2xl md:text-3xl">
-                R${getTotalValue(financialContributions)}
-              </p>
-            </div>
-            <div className="p-6 rounded-md border-2 shadow-sm">
-              <h3 className="text-slate-600">Última contribuição</h3>
-              <p className="font-semibold text-2xl md:text-3xl">
-                R${lastContribution}
-              </p>
-            </div>
-            <div className="p-6 rounded-md border-2 shadow-sm">
-              <h3 className="text-slate-600">
-                Tipo de contribuição mais frequente
-              </h3>
-              <p className="font-semibold text-2xl md:text-3xl">
-                {getMostCommonType(financialContributions)}
-              </p>
-            </div>
-          </div>
-          <div>
-            <h2 className="mt-10 font-semibold">
-              Evolução mensal das contribuições no último ano
-            </h2>
-            <div className="hidden sm:flex w-full h-96 mt-7">
-              <BarsDataset contributions={financialContributions} />
-            </div>
-          </div>
-          <h2 className="mt-10 font-semibold">Todas as contribuições</h2>
-          <ContributionsTable contributions={financialContributions} />
-        </div>
-      </main>
+        </main>
+      )}
     </Container>
   );
 };

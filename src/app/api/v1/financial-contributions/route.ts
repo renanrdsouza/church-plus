@@ -3,12 +3,23 @@ import {
   saveFinancialContribution,
 } from "@/models/financialContribution";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function POST(request: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Not authorized" }, { status: 401 });
+  }
+
   const body = await request.json();
 
   try {
-    const savedFinancialContribution = await saveFinancialContribution(body);
+    const savedFinancialContribution = await saveFinancialContribution(
+      body,
+      session.user.id,
+    );
 
     return NextResponse.json({ savedFinancialContribution }, { status: 201 });
   } catch (err: any) {
@@ -25,6 +36,12 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Not authorized" }, { status: 401 });
+  }
+
   const params = new URL(request.url).searchParams;
   const fromDate = params.get("fromDate");
   const toDate = params.get("toDate");
@@ -36,6 +53,7 @@ export async function GET(request: Request) {
     const contributions = await getContributionsByMonthAndYear(
       fromDate,
       toDate,
+      session.user.id,
     );
 
     return NextResponse.json({ contributions }, { status: 200 });

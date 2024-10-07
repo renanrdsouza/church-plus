@@ -17,7 +17,7 @@ export async function query(query: string) {
   }
 }
 
-export async function create(newMember: IMember) {
+export async function create(newMember: IMember, userId: string) {
   const parsedBirthDate = new Date(newMember.birth_date).toISOString();
   const parsedBaptismDate = new Date(newMember.baptism_date).toISOString();
   validateNewMember(newMember);
@@ -45,6 +45,7 @@ export async function create(newMember: IMember) {
       financial_contributions: {
         create: [],
       },
+      user_id: userId,
       phone_list: {
         create: newMember.phone_list?.map((phone) => ({
           phone_number: phone.phone_number,
@@ -67,7 +68,7 @@ export async function create(newMember: IMember) {
   return savedMember;
 }
 
-export async function getMember(id: string) {
+export async function getMember(id: string, userId: string) {
   /* 
     If findUniqueOrThrow does not found a member, 
     it throws an error with the following message: "No Member Found" 
@@ -75,6 +76,7 @@ export async function getMember(id: string) {
   const member = await prisma.member.findUniqueOrThrow({
     where: {
       id,
+      user_id: userId,
     },
     include: {
       address_list: true,
@@ -86,10 +88,11 @@ export async function getMember(id: string) {
   return member;
 }
 
-export async function getAllMembers() {
+export async function getAllMembers(userId: string) {
   const allMembers = await prisma.member.findMany({
     where: {
       status: Status.ACTIVE,
+      user_id: userId,
     },
     include: {
       address_list: true,
@@ -104,10 +107,12 @@ export async function getAllMembers() {
 export async function updateMember(
   id: string,
   updateRequest: IMemberPutRequest,
+  userId: string,
 ) {
   const existingMember = await prisma.member.findUniqueOrThrow({
     where: {
       id,
+      user_id: userId,
     },
   });
 
@@ -116,6 +121,7 @@ export async function updateMember(
   const updatedMember = await prisma.member.update({
     where: {
       id,
+      user_id: userId,
     },
     data: {
       name: updateRequest.name || existingMember.name,
@@ -162,10 +168,11 @@ export async function updateMember(
   return updatedMember;
 }
 
-export async function deleteMember(id: string) {
+export async function deleteMember(id: string, userId: string) {
   const memberToDelete = await prisma.member.findUniqueOrThrow({
     where: {
       id: id,
+      user_id: userId,
     },
   });
 
