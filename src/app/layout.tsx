@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "Administração de igrejas",
   keywords: ["Administração", "Igreja", "Finanças"],
   openGraph: {
-    images: ["../../public/logo_transparent.png"],
+    images: ["../../public/logo.png"],
   },
   robots: {
     index: true,

@@ -168,7 +168,7 @@ const RegisterMember = () => {
         });
         setTimeout(() => {
           router.push("/membros");
-        }, 4000);
+        }, 2000);
       } else {
         const { error } = await response.json();
         toast.error(
