@@ -15,6 +15,7 @@ export interface IMember {
   phone_list: IPhone[];
   created_at?: Date;
   updated_at?: Date;
+  user_id: string;
 }
 
 export interface IFinancialContribuition {
@@ -23,6 +24,7 @@ export interface IFinancialContribuition {
   value: number;
   type: string;
   member_id: string;
+  user_id: string;
 }
 
 export interface IPhone {

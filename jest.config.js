@@ -9,8 +9,8 @@ const createJestConfig = nextJest({
 const jestConfig = createJestConfig({
   moduleDirectories: ["node_modules", "<rootDir>"],
   clearMocks: true,
-  testEnvironment: 'node',
-  setupFilesAfterEnv: ['<rootDir>/src/tests/singleton.ts'],
+  testEnvironment: "node",
+  setupFilesAfterEnv: ["<rootDir>/src/tests/singleton.ts"],
 });
 
 module.exports = jestConfig;

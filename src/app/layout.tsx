@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Montserrat } from "next/font/google";
 import "./globals.css";
 import Header from "./components/header";
+import { AuthProvider } from "@/providers/auth";
 
 const montserrat = Montserrat({ subsets: ["cyrillic"] });
 
@@ -10,7 +11,7 @@ export const metadata: Metadata = {
   description: "Administração de igrejas",
   keywords: ["Administração", "Igreja", "Finanças"],
   openGraph: {
-    images: ["../../public/logo_transparent.png"],
+    images: ["../../public/logo.png"],
   },
   robots: {
     index: true,
@@ -32,8 +33,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${montserrat.className} bg-slate-100`}>
-        <Header />
-        {children}
+        <AuthProvider>
+          <Header />
+          {children}
+        </AuthProvider>
       </body>
     </html>
   );

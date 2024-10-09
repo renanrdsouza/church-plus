@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { z } from "zod";
 import Loading from "../../loading";
+import { useRouter } from "next/navigation";
 
 interface Member {
   id: string;
@@ -20,17 +21,25 @@ const contributionSchema = z.object({
     }),
   value: z
     .string()
-    .regex(/^\d+,\d{2}$/, "Valor deve estar no formato 0,00")
-    .transform((val) => parseFloat(val.replace(",", ".")) * 100),
+    .refine((val) => !val.includes("R$"), {
+      message: 'O valor não deve conter "R$"',
+    })
+    .refine((val) => /^\d+(,\d{1,2})?$/.test(val), {
+      message: "O valor deve estar no formato correto (ex: 1234,56)",
+    }),
 });
+
+type RegisterFinancialContributionData = z.infer<typeof contributionSchema>;
 
 const RegisterFinancialContributionForm = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   const {
     register,
     handleSubmit,
+    reset,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(contributionSchema),
@@ -56,9 +65,37 @@ const RegisterFinancialContributionForm = () => {
     fetchMembers();
   }, []);
 
-  const onSubmit = (formData: any) => {
-    console.log(formData);
-    toast.success("Contribuição registrada com sucesso!");
+  const onSubmit = async (formData: RegisterFinancialContributionData) => {
+    const baseUrl = process.env.NEXT_PUBLIC_API_URL;
+    const body = {
+      member_id: formData.memberId,
+      value: parseInt(formData.value.replace(",", "")),
+      type: formData.contributionType,
+    };
+
+    const response = await fetch(`${baseUrl}/api/v1/financial-contributions`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(body),
+    });
+
+    if (response.ok) {
+      reset();
+
+      toast.success("Contribuição financeira inserida!", {
+        duration: 2000,
+      });
+
+      setTimeout(() => {
+        router.push("/financas");
+      }, 2000);
+    } else {
+      toast.error("Erro ao inserir contribuição financeira", {
+        duration: 2000,
+      });
+    }
   };
 
   if (loading) {

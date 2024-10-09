@@ -5,18 +5,26 @@ import {
 } from "@/models/financialContribution";
 import { IFinancialContributionPutRequest } from "@/models/modelsInterfaces";
 import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 
 export async function GET(
   request: Request,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Not authorized" }, { status: 401 });
+  }
+
   const id: string = params.id;
 
   if (!id)
     return NextResponse.json({ error: "Missing member_id" }, { status: 400 });
 
   try {
-    const contributions = await getMemberContributions(id);
+    const contributions = await getMemberContributions(id, session.user.id);
 
     return NextResponse.json({ contributions }, { status: 200 });
   } catch (err: any) {
@@ -31,6 +39,12 @@ export async function PUT(
   request: Request,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Not authorized" }, { status: 401 });
+  }
+
   const id: string = params.id;
   const body: IFinancialContributionPutRequest = await request.json();
 
@@ -44,6 +58,7 @@ export async function PUT(
     const updatedFinancialContribution = await updateFinancialContribution(
       id,
       body,
+      session.user.id,
     );
 
     return NextResponse.json({ updatedFinancialContribution }, { status: 200 });
@@ -63,6 +78,12 @@ export async function DELETE(
   request: Request,
   { params }: { params: { id: string } },
 ) {
+  const session = await getServerSession(authOptions);
+
+  if (!session || !session.user) {
+    return NextResponse.json({ error: "Not authorized" }, { status: 401 });
+  }
+
   const id = params.id;
 
   if (id === undefined || id === null || id === "")
@@ -72,7 +93,7 @@ export async function DELETE(
     );
 
   try {
-    await deleteFinancialContribution(id);
+    await deleteFinancialContribution(id, session.user.id);
     return NextResponse.json(
       { message: "Financial contribution deleted." },
       { status: 200 },
