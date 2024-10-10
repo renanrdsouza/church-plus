@@ -5,9 +5,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Controller, useForm } from "react-hook-form";
 import Link from "next/link";
 import toast, { Toaster } from "react-hot-toast";
-import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import { useEffect, useState } from "react";
 
 const phoneSchema = z
   .string()
@@ -103,19 +103,21 @@ type CreateUserFormData = z.infer<typeof schema>;
 
 const RegisterMember = () => {
   const { data, status } = useSession();
+  const [cep, setCep] = useState<string>("");
 
   if (status === "unauthenticated" || !data?.user) {
     redirect("/");
   }
 
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  const router = useRouter();
 
   const {
     register,
     handleSubmit,
     control,
     watch,
+    setValue,
+    reset,
     formState: { errors },
   } = useForm<CreateUserFormData>({
     resolver: zodResolver(schema),
@@ -166,9 +168,7 @@ const RegisterMember = () => {
         toast.success("Membro cadastrado com sucesso!", {
           duration: 2000,
         });
-        setTimeout(() => {
-          router.push("/membros");
-        }, 2000);
+        reset();
       } else {
         const { error } = await response.json();
         toast.error(
@@ -181,6 +181,30 @@ const RegisterMember = () => {
       toast.error(error.message);
     }
   };
+
+  useEffect(() => {
+    if (cep.length === 5 && !cep.includes("-")) {
+      setValue("cep", cep + "-");
+    }
+
+    if (cep.length === 9) {
+      const handleAddress = async (cep: string) => {
+        const viaCepUrl = `https://viacep.com.br/ws/${cep}/json/`;
+        try {
+          const response = await fetch(viaCepUrl);
+          const data = await response.json();
+          setValue("street", data.logradouro);
+          setValue("city", data.localidade);
+          setValue("neighborhood", data.bairro);
+          setValue("uf", data.uf);
+        } catch (error: any) {
+          toast.error(error.message);
+        }
+      };
+
+      handleAddress(cep);
+    }
+  }, [cep]);
 
   return (
     <Container>
@@ -451,6 +475,31 @@ const RegisterMember = () => {
                     Informações de endereço
                   </h2>
 
+                  <div className="sm:col-span-2">
+                    <label
+                      htmlFor="cep"
+                      className="block text-sm font-medium leading-6 text-gray-900"
+                    >
+                      CEP
+                    </label>
+                    <div className="mt-2">
+                      <input
+                        id="cep"
+                        {...register("cep")}
+                        type="text"
+                        autoComplete="cep"
+                        placeholder="00000-000"
+                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                        onChange={(event) => setCep(event.target.value)}
+                      />
+                      {errors.cep && (
+                        <p className="text-red-500 text-sm mt-2">
+                          {errors.cep.message}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
                   <div className="col-span-full">
                     <label
                       htmlFor="street"
@@ -517,30 +566,6 @@ const RegisterMember = () => {
                       {errors.uf && (
                         <p className="text-red-500 text-sm mt-2">
                           {errors.uf.message}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="sm:col-span-2">
-                    <label
-                      htmlFor="cep"
-                      className="block text-sm font-medium leading-6 text-gray-900"
-                    >
-                      CEP
-                    </label>
-                    <div className="mt-2">
-                      <input
-                        id="cep"
-                        {...register("cep")}
-                        type="text"
-                        autoComplete="cep"
-                        placeholder="00000-000"
-                        className="block w-full rounded-md border-0 p-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                      />
-                      {errors.cep && (
-                        <p className="text-red-500 text-sm mt-2">
-                          {errors.cep.message}
                         </p>
                       )}
                     </div>
