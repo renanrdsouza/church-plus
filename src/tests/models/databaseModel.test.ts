@@ -4,6 +4,7 @@ import {
   getMember,
   deleteMember,
   getAllMembers,
+  getMemberLike,
 } from "../../models/memberService";
 import { Status } from "../../utils/enums";
 import { buildMember } from "../testUtils";
@@ -52,15 +53,16 @@ describe("query", () => {
 
 describe("create", () => {
   beforeEach(() => {
-    // Clear all mocks before each test
     jest.clearAllMocks();
   });
+
+  const userId = "test-user-id"; // Replace with an appropriate userId for the test
 
   it("should save a new member and return the saved member", async () => {
     const newMember = buildMember();
     prismaMock.member.create.mockResolvedValue(newMember);
 
-    const result = await create(newMember);
+    const result = await create(newMember, userId);
 
     expect(prismaMock.member.findFirst).toHaveBeenCalledWith({
       where: {
@@ -78,6 +80,7 @@ describe("create", () => {
         mother_name: newMember.mother_name,
         education: newMember.education,
         profession: newMember.profession,
+        user_id: newMember.user_id,
         financial_contributions: {
           create: [],
         },
@@ -113,7 +116,9 @@ describe("create", () => {
       new Error("Member already exists"),
     );
 
-    await expect(create(newMember)).rejects.toThrow("Member already exists");
+    await expect(create(newMember, userId)).rejects.toThrow(
+      "Member already exists",
+    );
   });
 });
 
@@ -123,15 +128,16 @@ describe("getMember", () => {
   });
   it("returns a member when one exists with the provided id", async () => {
     const id = "some-id";
+    const userId = "test-user-id";
     const mockMember = buildMember();
 
     prismaMock.member.findUniqueOrThrow.mockResolvedValue(mockMember);
 
-    const member = await getMember(id);
+    const member = await getMember(id, userId);
 
     expect(member).toEqual(mockMember);
     expect(prismaMock.member.findUniqueOrThrow).toHaveBeenCalledWith({
-      where: { id },
+      where: { id, user_id: userId },
       include: {
         address_list: true,
         phone_list: true,
@@ -142,14 +148,15 @@ describe("getMember", () => {
 
   it("throws an error when no member exists with the provided id", async () => {
     const id = "some-id";
+    const userId = "test-user-id";
 
     prismaMock.member.findUniqueOrThrow.mockRejectedValue(
       new Error("No Member found"),
     );
 
-    await expect(getMember(id)).rejects.toThrow("No Member found");
+    await expect(getMember(id, userId)).rejects.toThrow("No Member found");
     expect(prismaMock.member.findUniqueOrThrow).toHaveBeenCalledWith({
-      where: { id },
+      where: { id, user_id: userId },
       include: {
         address_list: true,
         phone_list: true,
@@ -161,6 +168,11 @@ describe("getMember", () => {
 
 describe("deleteMember", () => {
   const member = buildMember();
+  const userId = "test-user-id";
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -171,9 +183,9 @@ describe("deleteMember", () => {
       ...member,
     });
 
-    await deleteMember(member.id);
+    await deleteMember(member.id, userId);
     expect(prismaMock.member.findUniqueOrThrow).toHaveBeenCalledWith({
-      where: { id: member.id },
+      where: { id: member.id, user_id: userId }, // Adicione o campo user_id aqui
     });
   });
 
@@ -182,7 +194,7 @@ describe("deleteMember", () => {
       ...member,
     });
 
-    await deleteMember(member.id);
+    await deleteMember(member.id, userId);
     expect(prismaMock.member.update).toHaveBeenCalledWith({
       where: { id: member.id },
       data: { status: Status.INACTIVE },
@@ -191,37 +203,14 @@ describe("deleteMember", () => {
 
   it("should mark a member as inactive", async () => {
     prismaMock.member.findUniqueOrThrow.mockResolvedValueOnce({
-      id: member.id,
-      name: "John Doe",
-      cpf: "123456789",
-      birth_date: new Date(),
-      email: "johndoe@example.com",
-      baptism_date: new Date(),
-      father_name: "John Doe Sr.",
-      mother_name: "Jane Doe",
-      education: "Bachelor's Degree",
-      profession: "Software Engineer",
-      created_at: new Date(),
-      updated_at: new Date(),
-      status: Status.INACTIVE,
+      ...member,
     });
     prismaMock.member.update.mockResolvedValueOnce({
-      id: member.id,
-      name: "John Doe",
-      cpf: "123456789",
-      birth_date: new Date(),
-      email: "johndoe@example.com",
-      baptism_date: new Date(),
-      father_name: "John Doe Sr.",
-      mother_name: "Jane Doe",
-      education: "Bachelor's Degree",
-      profession: "Software Engineer",
-      created_at: new Date(),
-      updated_at: new Date(),
+      ...member,
       status: Status.INACTIVE,
     });
 
-    await deleteMember(member.id);
+    await deleteMember(member.id, userId);
 
     expect(prismaMock.member.update).toHaveBeenCalledWith({
       where: { id: member.id },
@@ -229,13 +218,12 @@ describe("deleteMember", () => {
     });
   });
 
-  // Optional: Test handling of invalid ID, assuming your function or Prisma throws an error
   it("should throw an error if the member does not exist", async () => {
     prismaMock.member.findUniqueOrThrow.mockRejectedValueOnce(
       new Error("Member not found"),
     );
 
-    await expect(deleteMember("invalid-id")).rejects.toThrow(
+    await expect(deleteMember("invalid-id", "invalid-user-id")).rejects.toThrow(
       "Member not found",
     );
   });
@@ -248,16 +236,18 @@ describe("getAllMembers", () => {
 
   it("should return all active members", async () => {
     const mockMembers = [buildMember(), buildMember()];
+    const userId = "test-user-id";
 
     prismaMock.member.findMany.mockResolvedValue(mockMembers);
 
-    const members = await getAllMembers();
+    const members = await getAllMembers(userId);
 
     expect(members).toEqual(mockMembers);
     expect(prismaMock.member.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.member.findMany).toHaveBeenCalledWith({
       where: {
         status: Status.ACTIVE,
+        user_id: userId, // Adicione o campo user_id aqui
       },
       include: {
         address_list: true,
@@ -269,14 +259,16 @@ describe("getAllMembers", () => {
 
   it("should return an empty array if no active members found", async () => {
     prismaMock.member.findMany.mockResolvedValue([]);
+    const userId = "test-user-id";
 
-    const members = await getAllMembers();
+    const members = await getAllMembers(userId);
 
     expect(members).toEqual([]);
     expect(prismaMock.member.findMany).toHaveBeenCalledTimes(1);
     expect(prismaMock.member.findMany).toHaveBeenCalledWith({
       where: {
         status: Status.ACTIVE,
+        user_id: userId, // Adicione o campo user_id aqui
       },
       include: {
         address_list: true,
@@ -297,9 +289,77 @@ describe("getAllMembers", () => {
       mockMembers.filter((member) => member.status === Status.ACTIVE),
     );
 
-    const members = await getAllMembers();
+    const userId = "test-user-id";
+    const members = await getAllMembers(userId);
 
     expect(members.length).toBe(2);
     expect(prismaMock.member.findMany).toHaveBeenCalledTimes(1);
+    expect(prismaMock.member.findMany).toHaveBeenCalledWith({
+      where: {
+        status: Status.ACTIVE,
+        user_id: userId, // Adicione o campo user_id aqui
+      },
+      include: {
+        address_list: true,
+        phone_list: true,
+        financial_contributions: true,
+      },
+    });
+  });
+});
+
+describe("getMemberLike", () => {
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should return members that match the given name", async () => {
+    const mockMembers = [buildMember(), buildMember()];
+
+    prismaMock.member.findMany.mockResolvedValue(mockMembers);
+
+    const result = await getMemberLike("Doe");
+
+    expect(prismaMock.member.findMany).toHaveBeenCalledWith({
+      where: {
+        name: {
+          contains: "Doe",
+        },
+      },
+      include: {
+        address_list: true,
+        phone_list: true,
+        financial_contributions: true,
+      },
+    });
+
+    expect(result).toEqual(mockMembers);
+  });
+
+  it("should return an empty array if no members match the given name", async () => {
+    prismaMock.member.findMany.mockResolvedValue([]);
+
+    const result = await getMemberLike("NonExistentName");
+
+    expect(prismaMock.member.findMany).toHaveBeenCalledWith({
+      where: {
+        name: {
+          contains: "NonExistentName",
+        },
+      },
+      include: {
+        address_list: true,
+        phone_list: true,
+        financial_contributions: true,
+      },
+    });
+
+    expect(result).toEqual([]);
+  });
+
+  it("should handle errors gracefully", async () => {
+    prismaMock.member.findMany.mockRejectedValue(new Error("Database error"));
+
+    await expect(getMemberLike("Doe")).rejects.toThrow("Database error");
   });
 });
