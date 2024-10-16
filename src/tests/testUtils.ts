@@ -15,6 +15,7 @@ export function buildMember(status: Status = Status.ACTIVE) {
     created_at: new Date("2021-01-01"),
     updated_at: new Date("2021-01-01"),
     status,
+    user_id: "test-user-id",
     phone_list: [
       {
         id: "1",

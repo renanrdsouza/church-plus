@@ -185,3 +185,20 @@ export async function deleteMember(id: string, userId: string) {
     },
   });
 }
+
+export async function getMemberLike(name: string) {
+  const members = await prisma.member.findMany({
+    where: {
+      name: {
+        contains: name,
+      },
+    },
+    include: {
+      address_list: true,
+      phone_list: true,
+      financial_contributions: true,
+    },
+  });
+
+  return members;
+}
