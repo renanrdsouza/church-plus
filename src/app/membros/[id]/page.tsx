@@ -7,11 +7,21 @@ import { ChevronDownIcon, ChevronUpIcon } from "@heroicons/react/20/solid";
 import RegisterFinancialContributionForm from "./components/registerFinancialContributionForm";
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
+import ContributionsTable from "@/app/financas/components/contributionsTable";
 
 interface MemberDetailProps {
   params: {
     id: string;
   };
+}
+
+interface FinancialContribution {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  value: number;
+  type: string;
+  member_id: string;
 }
 
 const MemberDetail = ({ params }: MemberDetailProps) => {
@@ -31,6 +41,8 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
   const [lastContribution, setLastContribution] = useState<string>();
   const [lastFinancialContributionType, setLastFinancialContributionType] =
     useState<string>();
+  const [financialContributions, setFinancialContributions] =
+    useState<FinancialContribution[]>();
 
   const handleEducation = (education: string | undefined) => {
     const educationLevels: { [key: string]: string } = {
@@ -93,6 +105,7 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
         handleLastFinancialContributionType(
           data.member.financial_contributions,
         );
+        setFinancialContributions(data.member.financial_contributions);
       } catch (error) {
         console.error("Erro ao buscar dados do membro:", error);
       } finally {
@@ -285,9 +298,18 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
                     modifyLastContributionType={
                       setLastFinancialContributionType
                     }
+                    actualContributions={financialContributions}
+                    setContributions={setFinancialContributions}
                   />
                 </div>
               </div>
+            )}
+          </div>
+
+          <div className="m-3 sm:mt-7 p-4 rounded-md border-2 shadow-xl">
+            <h2 className="font-semibold">Todas as contribuições do membro</h2>
+            {financialContributions && (
+              <ContributionsTable contributions={financialContributions} />
             )}
           </div>
         </main>

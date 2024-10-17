@@ -1,12 +1,24 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+"use client";
 import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import toast, { Toaster } from "react-hot-toast";
 import { z } from "zod";
+
+interface FinancialContribution {
+  id: string;
+  created_at: string;
+  updated_at: string;
+  value: number;
+  type: string;
+  member_id: string;
+}
 
 interface RegisterFinancialContributionFormProps {
   memberId: string;
   modifyLastContributionValue: (value: string) => void;
   modifyLastContributionType: (value: string) => void;
+  actualContributions: FinancialContribution[] | undefined;
+  setContributions: (contributions: FinancialContribution[]) => void;
 }
 
 const schema = z.object({
@@ -25,11 +37,14 @@ const schema = z.object({
 
 type RegisterFinancialContributionData = z.infer<typeof schema>;
 
-const RegisterFinancialContributionForm = (
-  props: RegisterFinancialContributionFormProps,
-) => {
+const RegisterFinancialContributionForm = ({
+  memberId,
+  modifyLastContributionType,
+  modifyLastContributionValue,
+  setContributions,
+  actualContributions,
+}: RegisterFinancialContributionFormProps) => {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL;
-  const { memberId } = props;
   const {
     register,
     handleSubmit,
@@ -38,23 +53,6 @@ const RegisterFinancialContributionForm = (
   } = useForm<RegisterFinancialContributionData>({
     resolver: zodResolver(schema),
   });
-
-  const handleLastContribution = (value: any) => {
-    props.modifyLastContributionValue(
-      (value / 100).toFixed(2).replace(".", ","),
-    );
-  };
-
-  const handleLastFinancialContributionType = (type: any) => {
-    const translatedTypes: { [key: string]: string } = {
-      Tithe: "Dízimo",
-      Offering: "Oferta",
-      Donation: "Doação",
-      Other: "Outro",
-    };
-
-    props.modifyLastContributionType(translatedTypes[type]);
-  };
 
   const onSubmit = async (data: RegisterFinancialContributionData) => {
     const body = {
@@ -72,13 +70,27 @@ const RegisterFinancialContributionForm = (
     });
 
     if (response.ok) {
-      handleLastContribution(body.value);
-      handleLastFinancialContributionType(body.type);
-      reset();
+      modifyLastContributionValue(
+        (body.value / 100).toFixed(2).replace(".", ","),
+      );
+      modifyLastContributionType(
+        {
+          Tithe: "Dízimo",
+          Offering: "Oferta",
+          Donation: "Doação",
+          Other: "Outro",
+        }[body.type],
+      );
 
-      toast.success("Contribuição financeira inserida!", {
-        duration: 2000,
-      });
+      reset();
+      const newContribution = await response.json();
+
+      setContributions([
+        ...(actualContributions || []),
+        newContribution.savedFinancialContribution,
+      ]);
+
+      toast.success("Contribuição financeira inserida!", { duration: 2000 });
     } else {
       toast.error("Erro ao inserir contribuição financeira", {
         duration: 2000,
@@ -96,7 +108,9 @@ const RegisterFinancialContributionForm = (
               type="text"
               placeholder="0,00"
               {...register("value")}
-              className="p-2 outline-none border-gray-300 rounded-md w-full mt-3"
+              className={`p-2 outline-none border-gray-300 rounded-md w-full mt-3 ${
+                errors.value ? "border-red-500" : ""
+              }`}
             />
             {errors.value && (
               <p className="text-red-500 text-sm mt-2">
