@@ -155,7 +155,7 @@ export default function Example() {
               }
             `}
           >
-            Membresia
+            Membros
           </Link>
 
           <Link
