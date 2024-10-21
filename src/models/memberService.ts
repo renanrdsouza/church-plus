@@ -114,9 +114,15 @@ export async function updateMember(
       id,
       user_id: userId,
     },
+    include: {
+      address_list: true,
+      phone_list: true,
+    },
   });
 
   validateUpdateMember(updateRequest);
+  console.log(existingMember);
+  console.log(updateRequest);
 
   const updatedMember = await prisma.member.update({
     where: {
@@ -139,7 +145,7 @@ export async function updateMember(
       address_list: {
         update: updateRequest.address_list?.map((address) => ({
           where: {
-            id: address.id,
+            id: existingMember.address_list[0].id,
           },
           data: {
             zip_code: address.zip_code,
@@ -155,7 +161,7 @@ export async function updateMember(
       phone_list: {
         update: updateRequest.phone_list?.map((phone) => ({
           where: {
-            id: phone.id,
+            id: existingMember.phone_list[0].id,
           },
           data: {
             phone_number: phone.phone_number,
