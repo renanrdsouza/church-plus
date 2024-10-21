@@ -140,7 +140,7 @@ const Financas = () => {
               </div>
             </div>
             <div>
-              <h2 className="mt-10 font-semibold">
+              <h2 className="hidden sm:flex mt-10 font-semibold">
                 Evolução mensal das contribuições no último ano
               </h2>
               <div className="hidden sm:flex w-full h-96 mt-7">

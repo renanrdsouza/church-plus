@@ -8,6 +8,7 @@ import RegisterFinancialContributionForm from "./components/registerFinancialCon
 import { useSession } from "next-auth/react";
 import { redirect } from "next/navigation";
 import ContributionsTable from "@/app/financas/components/contributionsTable";
+import Link from "next/link";
 
 interface MemberDetailProps {
   params: {
@@ -251,9 +252,12 @@ const MemberDetail = ({ params }: MemberDetailProps) => {
                     </dd>
                   </div>
                 </dl>
-                <button className="bg-slate-500 rounded-md p-2 text-white hover:bg-slate-300 hover:text-black transition-colors duration-300">
+                <Link
+                  href={`/editar-membro/${member?.id}`}
+                  className="bg-slate-500 rounded-md p-2 text-white hover:bg-slate-300 hover:text-black transition-colors duration-300"
+                >
                   Editar
-                </button>
+                </Link>
               </div>
             )}
           </div>
