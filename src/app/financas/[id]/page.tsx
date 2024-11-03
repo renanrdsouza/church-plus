@@ -116,9 +116,7 @@ const FinancialContribution = ({ params }: FinancialContributionProps) => {
           <div className="flex flex-col gap-y-10 p-6">
             <div>
               <h1 className="text-3xl font-bold text-gray-800">Membro</h1>
-              <p className="text-xl font-bold">
-                {retrievedData.member.Retrievedname}
-              </p>
+              <p className="text-xl font-bold">{retrievedData.member.name}</p>
             </div>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col gap-10">
@@ -169,7 +167,7 @@ const FinancialContribution = ({ params }: FinancialContributionProps) => {
                 <div>
                   <p className="text-base mb-33 font-medium text-gray-700">
                     Data:{" "}
-                    {retrievedData.contribution.updateRetrievedd_at
+                    {retrievedData.contribution.updated_at
                       .split("T")[0]
                       .split("-")
                       .reverse()
