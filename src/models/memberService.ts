@@ -175,16 +175,10 @@ export async function updateMember(
 }
 
 export async function deleteMember(id: string, userId: string) {
-  const memberToDelete = await prisma.member.findUniqueOrThrow({
+  await prisma.member.updateMany({
     where: {
       id: id,
       user_id: userId,
-    },
-  });
-
-  await prisma.member.update({
-    where: {
-      id: memberToDelete.id,
     },
     data: {
       status: Status.INACTIVE,
@@ -193,7 +187,7 @@ export async function deleteMember(id: string, userId: string) {
 }
 
 export async function getMemberLike(name: string) {
-  const members = await prisma.member.findMany({
+  return await prisma.member.findMany({
     where: {
       name: {
         contains: name,
@@ -205,6 +199,4 @@ export async function getMemberLike(name: string) {
       financial_contributions: true,
     },
   });
-
-  return members;
 }
