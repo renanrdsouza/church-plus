@@ -52,8 +52,6 @@ const ContributionsTable = ({ contributions }: ContributionsTableProps) => {
       method: "DELETE",
     });
 
-    console.log(id);
-
     const filteredItems = contributions.filter(
       (contribution) => contribution.id !== id,
     );

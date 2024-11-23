@@ -6,7 +6,9 @@ O objetivo deste software é auxiliar igrejas na administração tanto dos dados
 
 ## Rodando o projeto localmente
 
-1. Antes de iniciar o projeto é necessário adicionar na raiz do projeto um arquivo com o nome .env contendo as seguintes configurações:
+1. Para executar o projeto localmente é necessário ter o docker e o node(na versão LTS/Hydrogen) instalados.
+
+2. Antes de iniciar o projeto é necessário adicionar na raiz do projeto um arquivo com o nome .env contendo as seguintes configurações:
 
    ```
    POSTGRES_PASSWORD=local_password
@@ -24,23 +26,17 @@ O objetivo deste software é auxiliar igrejas na administração tanto dos dados
    GOOGLE_CLIENT_ID=(necessário criar em https://console.cloud.google.com)
    ```
 
-2. Execute o comando **npm ci** para instalar as dependências do projeto
+3. Execute o comando **npm ci** para instalar as dependências do projeto
 
-3. Inicie o servidor de desenvolvimento com os seguintes comandos:
+4. Inicie o servidor de desenvolvimento com os seguinte comando:
 
 ```bash
 npm run dev
-# OU
-yarn dev
-# OU
-pnpm dev
-# OU
-bun dev
 ```
 
-4. Abra o endereço [http://localhost:3000](http://localhost:3000) no seu navegador para ver o resultado.
+4. Abra o endereço [http://localhost:3000](http://localhost:3000) no seu navegador.
 
-5. Realize o login no sistema utilizando uma conta gmail de sua preferência(isso criará um usuário automaticamente para você no sistema).
+5. Realize o login no sistema utilizando uma conta gmail de sua preferência(isso criará um usuário pronto para uso para você no sistema).
 
 ### obs: Caso deseje acessar a versão de produção, acesse: [Church Plus](https://church-plus.vercel.app)
 
